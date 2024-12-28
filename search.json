@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "blog_listing.html",
+    "href": "blog_listing.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Correlation vs linear regression\n\n\n\n\n\n\n\nRegression\n\n\nCorrelation\n\n\nApp\n\n\n\n\nInteractively compare and contrast correlation and regression for simple linear models.\n\n\n\n\n\n\nDec 24, 2024\n\n\nAlasdair Warwick\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/correlation_regression.html",
+    "href": "blog/correlation_regression.html",
+    "title": "Correlation vs linear regression",
+    "section": "",
+    "text": "#| '!! shinylive warning !!': |\n#|   shinylive does not work in self-contained HTML documents.\n#|   Please set `embed-resources: false` in your metadata.\n#| standalone: true\n#| viewerHeight: 800\n# #| components: [viewer, editor]\n# #| layout: vertical\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport statsmodels.api as sm\nfrom scipy import stats\nfrom shiny import App, render, ui, reactive\n\n# Define the UI\napp_ui = ui.page_sidebar(\n    ui.sidebar(\n        ui.input_slider(\"slope\", \"Slope (β):\", -5.0, 5.0, 1.0, step=0.1),\n        ui.input_slider(\"intercept\", \"Intercept (c):\", -10, 10, 0, step=1),\n        ui.input_slider(\"noise\", \"Noise Level:\", 0, 50, 1, step=0.1),\n        ui.input_slider(\"n_points\", \"Number of Points:\", 10, 500, 100, step=10),\n        ui.input_checkbox(\"fix_scale\", \"Fix Axis Scale\", True)\n    ),\n    ui.row(\n        ui.column(\n            6,\n            ui.output_plot(\"scatter_plot\"),\n            ui.output_text(\"correlation_output\"),\n            ui.output_text(\"regression_output\")\n        ),\n        ui.column(\n            6,\n            ui.output_code(\"regression_summary\")\n            )\n    )\n)\n\n# Define the server logic\ndef server(input, output, session):\n    @reactive.Calc\n    def generate_data():\n        np.random.seed(42)  # For reproducibility\n        x = np.linspace(-10, 10, input.n_points())\n        noise = np.random.normal(0, input.noise(), len(x))\n        y = input.slope() * x + input.intercept() + noise\n        return pd.DataFrame({\"x\": x, \"y\": y})\n\n    @output\n    @render.plot\n    def scatter_plot():\n        data = generate_data()\n        x, y = data[\"x\"], data[\"y\"]\n        max_val = max(abs(x).max(), abs(y).max())\n        plt.figure()\n        plt.scatter(x, y)\n        plt.axhline(0, color='black', linewidth=1)\n        plt.axvline(0, color='black', linewidth=1)\n        plt.xlabel(\"X\")\n        plt.ylabel(\"Y\")\n        plt.title(\"Scatter Plot\")\n        plt.grid(True)\n        if input.fix_scale():\n            plt.xlim(-max_val, max_val)\n            plt.ylim(-max_val, max_val)\n        plt.gca().set_aspect('equal', adjustable='box')\n        return plt.gcf()\n\n    @output\n    @render.text\n    def correlation_output():\n        data = generate_data()\n        correlation, p_value = stats.pearsonr(data[\"x\"], data[\"y\"])\n        return f\"Correlation: {correlation:.2f}, p-value: {p_value:.2e}\"\n\n    @output\n    @render.text\n    def regression_output():\n        data = generate_data()\n        x = sm.add_constant(data[\"x\"])  # Adds a constant term to the predictor\n        model = sm.OLS(data[\"y\"], x).fit()\n        summary = model.summary2().tables[1]\n        slope_p_value = summary.loc[\"x\", \"P>|t|\"]\n        intercept_p_value = summary.loc[\"const\", \"P>|t|\"]\n        return (\n            f\"Regression Line: y = {model.params['x']:.2f}x + {model.params['const']:.2f}\\n\"\n            f\"R-squared: {model.rsquared:.2f}\\n\"\n            f\"Slope p-value: {slope_p_value:.2e}\\n\"\n            f\"Intercept p-value: {intercept_p_value:.2e}\\n\"\n            f\"Standard Error: {model.bse['x']:.2f}\"\n        )\n\n    @output\n    @render.code\n    def regression_summary():\n        data = generate_data()\n        x = sm.add_constant(data[\"x\"])  # Adds a constant term to the predictor\n        model = sm.OLS(data[\"y\"], x).fit()\n        return model.summary()\n\napp = App(app_ui, server)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome",
+    "section": "",
+    "text": "This is a simple Shinylive application embedded in a Quarto doc.\n#| '!! shinylive warning !!': |\n#|   shinylive does not work in self-contained HTML documents.\n#|   Please set `embed-resources: false` in your metadata.\n#| standalone: true\n#| components: [editor, viewer]\n#| layout: vertical\n\nfrom shiny import *\n\napp_ui = ui.page_fluid(\n    ui.input_slider(\"n\", \"N\", 0, 100, 40),\n    ui.output_text_verbatim(\"txt\"),\n)\n\ndef server(input, output, session):\n    @output\n    @render.text\n    def txt():\n        return f\"The value of n*2 is {input.n() * 2}\"\n\napp = App(app_ui, server)"
+  },
+  {
+    "objectID": "version.html",
+    "href": "version.html",
+    "title": "Statistics Foundations",
+    "section": "",
+    "text": "0.0.0.9000"
+  }
+]
