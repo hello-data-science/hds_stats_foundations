@@ -28,7 +28,8 @@ jobs:
             docker pull rmgpanw/hds_stats_foundations:latest
             docker create --name temp rmgpanw/hds_stats_foundations:latest
             docker cp ${{ github.workspace }}/source/. temp:/workspace/
-            docker start -a temp bash -c ". venv/bin/activate && quarto render"
+            docker start temp
+            docker exec temp bash -c ". venv/bin/activate && quarto render"
             docker cp temp:/workspace/docs/. ${{ github.workspace }}/source/docs/
             docker rm temp
 
