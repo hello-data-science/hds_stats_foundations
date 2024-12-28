@@ -22,8 +22,15 @@ RUN python -m venv venv \
     && . venv/bin/activate \
     && pip install --no-cache-dir -r requirements.txt
 
+# Set environment variables for venv
+ENV VIRTUAL_ENV=/workspace/venv
+ENV PATH="/workspace/venv/bin:$PATH"
+
+# Add venv activation to .bashrc for interactive shells
+RUN echo '. /workspace/venv/bin/activate' >> /root/.bashrc
+
 # Set default shell
 SHELL ["/bin/bash", "-c"]
 
 # Default entrypoint
-CMD ["bash"]
+CMD ["bash", "--login"]

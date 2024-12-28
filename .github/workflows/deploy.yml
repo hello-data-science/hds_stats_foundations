@@ -14,14 +14,12 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
       - name: Set up Docker
         run: |
             docker pull rmgpanw/hds_stats_foundations:latest
             docker run --rm rmgpanw/hds_stats_foundations:latest /bin/bash -c "
               . venv/bin/activate &&
-              quarto render ./docs
+              quarto render
               "
 
       - name: Deploy to GitHub Pages
