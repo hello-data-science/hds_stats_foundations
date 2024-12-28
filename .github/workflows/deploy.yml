@@ -1,17 +1,22 @@
 name: Deploy Quarto Website
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
     branches:
       - main
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    needs: build-push
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      # Step 1: Set up Docker
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Set up Docker
         run: |
           docker pull rmgpanw/hds_stats_foundations:latest
@@ -20,9 +25,8 @@ jobs:
             quarto render
           "
 
-      # Step 2: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs

@@ -37,4 +37,4 @@ jobs:
         push: true
         tags: |
           rmgpanw/hds_stats_foundations:${{ steps.version.outputs.tag }}
-          ${{ steps.version.outputs.tag_latest || '' }}
+          ${{ steps.version.outputs.tag_latest && format('rmgpanw/hds_stats_foundations:{0}', steps.version.outputs.tag_latest) || '' }}
