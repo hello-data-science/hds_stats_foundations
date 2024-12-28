@@ -1,0 +1,11 @@
+---
+title: "Blog"
+editor: source
+listing: 
+  contents: blog
+  type: default
+  categories: true
+  sort:
+    - "date"
+    - "title desc"
+---

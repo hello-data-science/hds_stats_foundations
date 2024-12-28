@@ -1,0 +1,116 @@
+---
+title: "Correlation vs linear regression"
+categories: [Regression, Correlation, App]
+description: Interactively compare and contrast correlation and regression for simple linear models.
+author: Alasdair Warwick
+date: 2024-12-24
+editor: source
+execute: 
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+:::{.column-screen-inset}
+
+```{shinylive-python}
+#| standalone: true
+#| viewerHeight: 800
+# #| components: [viewer, editor]
+# #| layout: vertical
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from scipy import stats
+from shiny import App, render, ui, reactive
+
+# Define the UI
+app_ui = ui.page_sidebar(
+    ui.sidebar(
+        ui.input_slider("slope", "Slope (β):", -5.0, 5.0, 1.0, step=0.1),
+        ui.input_slider("intercept", "Intercept (c):", -10, 10, 0, step=1),
+        ui.input_slider("noise", "Noise Level:", 0, 50, 1, step=0.1),
+        ui.input_slider("n_points", "Number of Points:", 10, 500, 100, step=10),
+        ui.input_checkbox("fix_scale", "Fix Axis Scale", True)
+    ),
+    ui.row(
+        ui.column(
+            6,
+            ui.output_plot("scatter_plot"),
+            ui.output_text("correlation_output"),
+            ui.output_text("regression_output")
+        ),
+        ui.column(
+            6,
+            ui.output_code("regression_summary")
+            )
+    )
+)
+
+# Define the server logic
+def server(input, output, session):
+    @reactive.Calc
+    def generate_data():
+        np.random.seed(42)  # For reproducibility
+        x = np.linspace(-10, 10, input.n_points())
+        noise = np.random.normal(0, input.noise(), len(x))
+        y = input.slope() * x + input.intercept() + noise
+        return pd.DataFrame({"x": x, "y": y})
+
+    @output
+    @render.plot
+    def scatter_plot():
+        data = generate_data()
+        x, y = data["x"], data["y"]
+        max_val = max(abs(x).max(), abs(y).max())
+        plt.figure()
+        plt.scatter(x, y)
+        plt.axhline(0, color='black', linewidth=1)
+        plt.axvline(0, color='black', linewidth=1)
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.title("Scatter Plot")
+        plt.grid(True)
+        if input.fix_scale():
+            plt.xlim(-max_val, max_val)
+            plt.ylim(-max_val, max_val)
+        plt.gca().set_aspect('equal', adjustable='box')
+        return plt.gcf()
+
+    @output
+    @render.text
+    def correlation_output():
+        data = generate_data()
+        correlation, p_value = stats.pearsonr(data["x"], data["y"])
+        return f"Correlation: {correlation:.2f}, p-value: {p_value:.2e}"
+
+    @output
+    @render.text
+    def regression_output():
+        data = generate_data()
+        x = sm.add_constant(data["x"])  # Adds a constant term to the predictor
+        model = sm.OLS(data["y"], x).fit()
+        summary = model.summary2().tables[1]
+        slope_p_value = summary.loc["x", "P>|t|"]
+        intercept_p_value = summary.loc["const", "P>|t|"]
+        return (
+            f"Regression Line: y = {model.params['x']:.2f}x + {model.params['const']:.2f}\n"
+            f"R-squared: {model.rsquared:.2f}\n"
+            f"Slope p-value: {slope_p_value:.2e}\n"
+            f"Intercept p-value: {intercept_p_value:.2e}\n"
+            f"Standard Error: {model.bse['x']:.2f}"
+        )
+
+    @output
+    @render.code
+    def regression_summary():
+        data = generate_data()
+        x = sm.add_constant(data["x"])  # Adds a constant term to the predictor
+        model = sm.OLS(data["y"], x).fit()
+        return model.summary()
+
+app = App(app_ui, server)
+```
+
+:::
