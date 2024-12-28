@@ -16,14 +16,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up Docker
-        run: |
-          docker pull rmgpanw/hds_stats_foundations:latest
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace rmgpanw/hds_stats_foundations:latest /bin/bash -c "
-            . venv/bin/activate &&
-            quarto render
-          "
+        - name: Set up Docker
+          run: |
+            docker pull rmgpanw/hds_stats_foundations:latest
+            docker run --rm rmgpanw/hds_stats_foundations:latest /bin/bash -c "
+          . venv/bin/activate &&
+          quarto render ./docs
+            "
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
