@@ -72,9 +72,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -148,7 +148,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="App">App <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Correlation">Correlation <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Regression">Regression <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="App">App <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Correlation">Correlation <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Positive predictive value">Positive predictive value <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Regression">Regression <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -175,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Regression,Correlation,App" data-listing-date-sort="1734998400000" data-listing-file-modified-sort="1735400658000" data-listing-reading-time-sort="3.825">
+<div class="quarto-post image-right" data-index="0" data-categories="Regression,Correlation,App" data-listing-date-sort="1734998400000" data-listing-file-modified-sort="1735471051000" data-listing-reading-time-sort="3.825">
 <div class="body">
 <a href="./blog/correlation_regression.html">
 <h3 class="no-anchor listing-title">
@@ -206,6 +206,41 @@ App
 <a href="./blog/correlation_regression.html">
 <div class="listing-date">
 Dec 24, 2024
+</div>
+<div class="listing-author">
+Alasdair Warwick
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Positive predictive value,App" data-listing-date-sort="1735430400000" data-listing-file-modified-sort="1735471051000" data-listing-reading-time-sort="3.66">
+<div class="body">
+<a href="./blog/ppv.html">
+<h3 class="no-anchor listing-title">
+Interactive Exploration of Diagnostic Testing
+</h3>
+<div class="listing-subtitle">
+Sensitivity, specificity, postive and negative predictive values
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Positive predictive value'); return false;">
+Positive predictive value
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('App'); return false;">
+App
+</div>
+</div>
+<a href="./blog/ppv.html">
+<div class="listing-description">
+<p>Understanding how disease prevalence and test characteristics affect diagnostic test performance is crucial in clinical practice. This interactive visualisation demonstrates these relationships using a population of 100 individuals.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./blog/ppv.html">
+<div class="listing-date">
+Dec 29, 2024
 </div>
 <div class="listing-author">
 Alasdair Warwick

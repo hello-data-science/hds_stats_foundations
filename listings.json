@@ -2,7 +2,8 @@
   {
     "listing": "/blog_listing.html",
     "items": [
-      "/blog/correlation_regression.html"
+      "/blog/correlation_regression.html",
+      "/blog/ppv.html"
     ]
   }
 ]
