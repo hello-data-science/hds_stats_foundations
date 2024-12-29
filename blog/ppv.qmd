@@ -64,6 +64,7 @@ ul ul, ol ol, ul ol, ol ul {
 Understanding how disease prevalence and test characteristics affect diagnostic test performance is crucial in clinical practice. This interactive visualisation demonstrates these relationships using a population of 100 individuals.
 
 ```{ojs}
+// Input sliders
 viewof prevalence = Inputs.range([1, 50], {
   label: "Disease Prevalence (%)",
   step: 1,
@@ -82,7 +83,7 @@ viewof specificity = Inputs.range([50, 100], {
   value: 90
 })
 
-// Calculate grid data
+// Reactive calculation
 grid = {
   const totalDots = 100;
   const diseaseCount = Math.round(totalDots * (prevalence / 100));
@@ -100,18 +101,20 @@ grid = {
   const falsePositives = dots.filter(d => !d.hasDisease && d.testPositive).length;
   const trueNegatives = dots.filter(d => !d.hasDisease && !d.testPositive).length;
   const falseNegatives = dots.filter(d => d.hasDisease && !d.testPositive).length;
-  
-  const ppv = truePositives / (truePositives + falsePositives) * 100 || 0;
-  const npv = trueNegatives / (trueNegatives + falseNegatives) * 100 || 0;
-  
+
+  const ppv = (truePositives / (truePositives + falsePositives)) * 100;
+  const npv = (trueNegatives / (trueNegatives + falseNegatives)) * 100;
+  const LRplus = (sensitivity / (100 - specificity));
+  const LRminus = ((100 - sensitivity) / specificity);
+
   return {
     dots: dots.sort((a, b) => (b.hasDisease * 2 + b.testPositive) - (a.hasDisease * 2 + a.testPositive)),
-    stats: { truePositives, falsePositives, trueNegatives, falseNegatives, ppv, npv }
+    stats: { truePositives, falsePositives, trueNegatives, falseNegatives, ppv, npv, LRplus, LRminus }
   };
 }
 
-// Render visualisation
-html`
+// Display output
+display = html`
 <div class="p-4 bg-white rounded-lg shadow">
   <div class="grid grid-cols-10 gap-1 p-4 bg-gray-100 rounded">
     ${grid.dots.map(dot => `
@@ -133,6 +136,9 @@ html`
       <p class="font-medium">Predictive Values:</p>
       <p class="font-bold">PPV: ${grid.stats.ppv.toFixed(1)}%</p>
       <p class="font-bold">NPV: ${grid.stats.npv.toFixed(1)}%</p>
+      <p class="font-medium mt-4">Likelihood Ratios:</p>
+      <p>LR+ = ${grid.stats.LRplus.toFixed(2)}</p>
+      <p>LR- = ${grid.stats.LRminus.toFixed(2)}</p>
     </div>
   </div>
 </div>
@@ -165,8 +171,30 @@ html`
    - Is strongly influenced by test sensitivity
    - Tends to be high when disease prevalence is low
 
-Try adjusting the sliders to explore these relationships. For example:
+3. **Likelihood Ratios (LR)** help interpret test results:
+
+   - **Positive Likelihood Ratio (LR+)** = Sensitivity / (1 - Specificity)
+     - Shows how much more likely a positive test is in diseased vs healthy people
+     - LR+ > 10 provides strong evidence for disease
+     - Higher values mean positive results are more meaningful
+
+   - **Negative Likelihood Ratio (LR-)** = (1 - Sensitivity) / Specificity  
+     - Shows how much less likely a negative test is in diseased vs healthy people
+     - LR- < 0.1 provides strong evidence against disease
+     - Lower values mean negative results are more meaningful
+
+::: {.callout-tip}
+## Try This
+
+**Try this:**
+
+1. Set high sensitivity (95%) and specificity (95%) to see strong LRs
+2. Notice how poor specificity drastically reduces LR+ 
+3. See how poor sensitivity affects LR-
+
+**Try adjusting the sliders to explore these relationships. For example:**
 
 1. Set a very low prevalence (1%) and observe the PPV
 2. Increase specificity and watch how it affects false positives
 3. Compare PPV and NPV at different prevalence levels
+:::
