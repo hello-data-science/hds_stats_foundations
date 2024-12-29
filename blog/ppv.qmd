@@ -1,0 +1,172 @@
+---
+title: "Interactive Exploration of Diagnostic Testing"
+subtitle: "Sensitivity, specificity, postive and negative predictive values"
+categories: [Positive predictive value, App]
+description: Understanding how disease prevalence and test characteristics affect diagnostic test performance is crucial in clinical practice. This interactive visualisation demonstrates these relationships using a population of 100 individuals.
+author: Alasdair Warwick
+date: 2024-12-29
+editor: source
+execute: 
+  warning: false
+editor_options: 
+  chunk_output_type: console
+format:
+    html:
+        include-in-header:
+            - text: |
+                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+---
+
+<style>
+/* Headers */
+h1 {
+  font-size: 1.75rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1.5rem !important;
+  color: #1a365d !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-bottom: 0.5rem !important;
+}
+
+h2 {
+  font-size: 1.4rem !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+  color: #2d3748 !important;
+}
+
+/* Lists */
+ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+li {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Ensure nested lists are properly styled */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+</style>
+
+# App
+
+Understanding how disease prevalence and test characteristics affect diagnostic test performance is crucial in clinical practice. This interactive visualisation demonstrates these relationships using a population of 100 individuals.
+
+```{ojs}
+viewof prevalence = Inputs.range([1, 50], {
+  label: "Disease Prevalence (%)",
+  step: 1,
+  value: 10
+})
+
+viewof sensitivity = Inputs.range([50, 100], {
+  label: "Test Sensitivity (%)",
+  step: 1,
+  value: 80
+})
+
+viewof specificity = Inputs.range([50, 100], {
+  label: "Test Specificity (%)",
+  step: 1,
+  value: 90
+})
+
+// Calculate grid data
+grid = {
+  const totalDots = 100;
+  const diseaseCount = Math.round(totalDots * (prevalence / 100));
+  
+  const expectedTruePositives = Math.round(diseaseCount * (sensitivity / 100));
+  const expectedFalsePositives = Math.round((totalDots - diseaseCount) * ((100 - specificity) / 100));
+  
+  const dots = Array(totalDots).fill(null).map((_, index) => ({
+    hasDisease: index < diseaseCount,
+    testPositive: index < (expectedTruePositives + expectedFalsePositives)
+  }));
+  
+  // Calculate statistics
+  const truePositives = dots.filter(d => d.hasDisease && d.testPositive).length;
+  const falsePositives = dots.filter(d => !d.hasDisease && d.testPositive).length;
+  const trueNegatives = dots.filter(d => !d.hasDisease && !d.testPositive).length;
+  const falseNegatives = dots.filter(d => d.hasDisease && !d.testPositive).length;
+  
+  const ppv = truePositives / (truePositives + falsePositives) * 100 || 0;
+  const npv = trueNegatives / (trueNegatives + falseNegatives) * 100 || 0;
+  
+  return {
+    dots: dots.sort((a, b) => (b.hasDisease * 2 + b.testPositive) - (a.hasDisease * 2 + a.testPositive)),
+    stats: { truePositives, falsePositives, trueNegatives, falseNegatives, ppv, npv }
+  };
+}
+
+// Render visualisation
+html`
+<div class="p-4 bg-white rounded-lg shadow">
+  <div class="grid grid-cols-10 gap-1 p-4 bg-gray-100 rounded">
+    ${grid.dots.map(dot => `
+      <div class="w-6 h-6 rounded-full ${dot.hasDisease ? 'bg-red-500' : 'bg-green-400'} 
+           ${dot.testPositive ? 'border-2 border-blue-500' : 'border border-transparent'}">
+      </div>
+    `).join('')}
+  </div>
+  
+  <div class="grid grid-cols-2 gap-4 mt-4 p-4 bg-gray-100 rounded">
+    <div>
+      <p class="font-medium">Test Results:</p>
+      <p>True Positives: ${grid.stats.truePositives}</p>
+      <p>False Positives: ${grid.stats.falsePositives}</p>
+      <p>True Negatives: ${grid.stats.trueNegatives}</p>
+      <p>False Negatives: ${grid.stats.falseNegatives}</p>
+    </div>
+    <div>
+      <p class="font-medium">Predictive Values:</p>
+      <p class="font-bold">PPV: ${grid.stats.ppv.toFixed(1)}%</p>
+      <p class="font-bold">NPV: ${grid.stats.npv.toFixed(1)}%</p>
+    </div>
+  </div>
+</div>
+`
+```
+
+## How to Use This Visualisation
+
+- **Disease Prevalence**: Adjust this slider to see how the proportion of diseased individuals in the population affects test performance.
+- **Test Sensitivity**: This represents the test's ability to correctly identify diseased individuals.
+- **Test Specificity**: This shows the test's ability to correctly identify healthy individuals.
+
+## Visual Guide
+
+- Each dot represents one individual in the population
+- **Red dots**: Individuals with disease
+- **Green dots**: Healthy individuals
+- **Blue border**: Positive test result
+- **No border**: Negative test result
+
+# Key Concepts
+
+1. **Positive Predictive Value (PPV)** is the probability that a person with a positive test result actually has the disease. Notice how PPV:
+   - Increases with higher disease prevalence
+   - Improves with better test specificity
+   - Can be surprisingly low when disease prevalence is low, even with good sensitivity
+
+2. **Negative Predictive Value (NPV)** is the probability that a person with a negative test result is truly disease-free. Observe how NPV:
+   - Decreases with higher disease prevalence
+   - Is strongly influenced by test sensitivity
+   - Tends to be high when disease prevalence is low
+
+Try adjusting the sliders to explore these relationships. For example:
+
+1. Set a very low prevalence (1%) and observe the PPV
+2. Increase specificity and watch how it affects false positives
+3. Compare PPV and NPV at different prevalence levels
