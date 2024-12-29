@@ -2,6 +2,14 @@
 title: "Welcome"
 ---
 
+## Overview
+
+Welcome to the Statistics Foundations project! This repository contains resources, code, and documentation for understanding fundamental concepts in statistics.
+
+This project aims to provide a comprehensive guide to foundational statistical concepts through interactive visualizations and practical examples. It is designed for students, educators, and professionals who want to deepen their understanding of statistics.
+
+## Example app
+
 This is a simple Shinylive application embedded in a Quarto doc.
 
 ```{shinylive-python}
