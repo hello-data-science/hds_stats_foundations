@@ -1,0 +1,267 @@
+---
+title: "Sampling Variation and Standard Error"
+subtitle: "Understanding Statistical Uncertainty Through Interactive Visualization"
+description: Explore how sample size affects sampling distribution using simulated samples of 100 individuals.
+categories: [Confidence intervals, Standard error, App]
+author: Alasdair Warwick
+date: 2024-12-29
+format:
+  html:
+    html-math-method:
+      method: mathjax
+    include-in-header:
+      - text: |
+          <script src="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
+editor: source
+execute: 
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+# App
+
+This interactive visualization allows you to explore how sample size affects the sampling distribution and the calculation of confidence intervals (CI). Adjust the sample size and confidence level, then take samples to see the results.
+
+```{ojs}
+// Define confidence levels and z-scores
+CONFIDENCE_LEVELS = ({
+  60: 0.841,
+  70: 1.036,
+  80: 1.28,
+  85: 1.44,
+  90: 1.645,
+  95: 1.96,
+  99: 2.576,
+  99.9: 3.291
+})
+
+// Create inputs
+viewof sampleSize = Inputs.range([10, 1000], {
+  step: 10, 
+  value: 10, 
+  label: "Sample Size"
+})
+
+// Create radio buttons for confidence level
+viewof confidenceLevel = Inputs.radio(
+  Object.keys(CONFIDENCE_LEVELS).map(Number).sort((a,b) => a-b),
+  {
+    value: 95,
+    label: "Confidence Level",
+    format: x => x + "%"
+  }
+)
+
+viewof takeSamples = Inputs.button("Take 100 Samples")
+
+// Generate initial population
+population = {
+  const size = 10000;
+  const mean = 120;
+  const std = 10;
+  
+  return Array.from({length: size}, () => {
+    let u1, u2;
+    do {
+      u1 = Math.random();
+      u2 = Math.random();
+    } while (u1 === 0);
+    
+    const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+    return Math.round(mean + z * std);
+  });
+}
+
+// Calculate population statistics
+populationStats = {
+  const mean = population.reduce((a, b) => a + b, 0) / population.length;
+  const squaredDiffs = population.map(x => Math.pow(x - mean, 2));
+  const variance = squaredDiffs.reduce((a, b) => a + b, 0) / population.length;
+  const std = Math.sqrt(variance);
+  
+  return {mean, std};
+}
+
+// Create population histogram
+populationPlot = Plot.plot({
+  width: 600,
+  height: 300,
+  grid: true,
+  x: {
+    label: "Blood Pressure (mmHg)",
+    domain: [80, 160],
+    ticks: d3.range(80, 161, 5)
+  },
+  y: {label: "Count"},
+  marks: [
+    Plot.rectY(
+      d3.bin()
+        .domain([80, 160])
+        .thresholds(40)
+        (population),
+      {x1: "x0", x2: "x1", y: "length", fill: "#8884d8"}
+    ),
+    Plot.ruleY([0]),
+    Plot.ruleX([populationStats.mean], {stroke: "red", strokeWidth: 2})
+  ],
+  title: "Population Distribution (N=10,000)"
+})
+
+// Initialize mutable state
+initialSampleMeans = []
+mutable sampleMeans = initialSampleMeans
+
+// Sampling handler cell
+handleSampling = {
+  takeSamples; // React to button clicks
+  
+  const newMeans = Array.from({length: 100}, () => {
+    const sample = Array.from({length: sampleSize}, () => 
+      population[Math.floor(Math.random() * population.length)]
+    );
+    return sample.reduce((a, b) => a + b, 0) / sample.length;
+  });
+  
+  mutable sampleMeans = newMeans;
+  return md`*Generated ${newMeans.length} new sample means*`
+}
+
+// Calculate confidence interval
+ciStats = {
+  if (sampleMeans.length === 0) return null;
+  
+  const standardError = populationStats.std / Math.sqrt(sampleSize);
+  const zScore = CONFIDENCE_LEVELS[confidenceLevel];
+  const ciWidth = zScore * standardError;
+  const ciLower = populationStats.mean - ciWidth;
+  const ciUpper = populationStats.mean + ciWidth;
+  const outsideCI = sampleMeans.filter(
+    mean => mean < ciLower || mean > ciUpper
+  ).length;
+  
+  return {
+    standardError,
+    ciLower,
+    ciUpper,
+    outsideCI
+  };
+}
+
+// Create sample means histogram
+samplingPlot = {
+  if (sampleMeans.length === 0) return null;
+  
+  return Plot.plot({
+    width: 600,
+    height: 300,
+    grid: true,
+    x: {
+      label: "Sample Mean Blood Pressure (mmHg)",
+      domain: [80, 160],
+      ticks: d3.range(80, 161, 5)
+    },
+    y: {label: "Count"},
+    marks: [
+      Plot.rectY(
+        d3.bin()
+          .domain([80, 160])
+          .thresholds(40)
+          (sampleMeans),
+        {x1: "x0", x2: "x1", y: "length", fill: "#82ca9d"}
+      ),
+      Plot.ruleY([0]),
+      Plot.ruleX([populationStats.mean], {stroke: "red", strokeWidth: 2}),
+      Plot.ruleX([ciStats.ciLower], {stroke: "blue", strokeDasharray: "3,3"}),
+      Plot.ruleX([ciStats.ciUpper], {stroke: "blue", strokeDasharray: "3,3"})
+    ],
+    title: `Distribution of Sample Means (n=${sampleSize})`
+  });
+}
+
+// Display statistics
+population_statistics = {
+  const population_stats = html`<div style="font-size: 14px; color: #666;">
+    <p>Population Mean: ${populationStats.mean.toFixed(1)} mmHg</p>
+    <p>Population Standard Deviation: ${populationStats.std.toFixed(1)} mmHg</p>
+  </div>`;
+  return population_stats;
+}
+
+sample_statistics = {
+ const sample_stats = html`<div style="font-size: 14px; color: #666;">
+    ${ciStats ? html`
+      <p>${confidenceLevel}% Confidence Interval: ${ciStats.ciLower.toFixed(1)} - ${ciStats.ciUpper.toFixed(1)} mmHg</p>
+      <p>Number of samples outside CI: ${ciStats.outsideCI} out of 100</p>
+      <p>Standard Error: ${ciStats.standardError.toFixed(2)} mmHg</p>
+    ` : ''}
+  </div>`;
+  return sample_stats; 
+}
+
+// Layout everything
+html`<div style="font-family: system-ui, sans-serif;">
+  ${populationPlot}
+  ${population_statistics}
+  <div style="margin: 1rem 0;">
+    ${viewof sampleSize}
+    ${viewof confidenceLevel}
+    ${viewof takeSamples}
+  </div>
+  ${handleSampling}
+  ${samplingPlot}
+  ${sample_statistics}
+</div>`
+```
+
+## How to Use This Visualisation
+
+Adjust the sample size and confidence level using the provided controls. Click the "Take 100 Samples" button to generate new sample means and visualize the results.
+
+## Visual Guide
+
+The population distribution and sample means distribution are displayed as histograms. The red line represents the population mean, and the blue dashed lines represent the confidence interval.
+
+- **Population Mean**: The average value of the entire population.
+- **Sample Mean**: The average value of a sample taken from the population.
+- **Standard Error**: The standard deviation of the sample means, indicating the variability of the sample means.
+- **Confidence Interval**: A range of values that is likely to contain the population mean with a certain level of confidence.
+
+# Key concepts
+
+- **Sample Size and Precision**: As sample size increases, the standard error decreases (proportional to $\frac{1}{\sqrt{n}}$), making estimates more precise
+- **Confidence Intervals**: A 95% CI means if we repeated sampling many times, about 95% of intervals would contain the true population mean
+- **Interpretation**: When reading "mean = 120 (95% CI: 115-125)", this suggests we're 95% confident the true population mean lies between 115-125
+- **Sample vs Population**: In real studies, we only have one sample and don't know the true population mean - the CI helps express our uncertainty
+
+::: {.callout-note collapse="true"}
+## Equations
+
+Mean ($\mu$): $$ \mu = \frac{1}{N} \sum_{i=1}^{N} x_i $$
+
+Standard Deviation ($\sigma$): $$ \sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2} $$
+
+Standard Error (SE): $$ SE = \frac{\sigma}{\sqrt{n}} $$
+
+Confidence Interval (CI): $$ CI = \mu \pm (z \times SE) $$
+:::
+
+::: {.callout-tip}
+## Try This
+
+1. Set sample size = 25:
+   - Notice wide confidence intervals
+   - Many sample means fall far from population mean
+   - About 5% of samples fall outside blue CI lines
+
+2. Increase to sample size = 400:
+   - Observe narrower confidence intervals
+   - Sample means cluster closer to true mean
+   - Same 5% outside CI, but now much closer
+
+3. Compare 95% vs 99% confidence:
+   - 99% gives wider intervals
+   - Fewer points fall outside CI lines
+   - Trade-off between confidence and precision
+:::
