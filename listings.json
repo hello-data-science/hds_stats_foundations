@@ -3,8 +3,8 @@
     "listing": "/blog_listing.html",
     "items": [
       "/blog/correlation_regression.html",
-      "/blog/sampling_variation_se.html",
-      "/blog/ppv.html"
+      "/blog/ppv.html",
+      "/blog/sampling_variation_se.html"
     ]
   }
 ]
