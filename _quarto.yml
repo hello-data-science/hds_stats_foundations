@@ -6,6 +6,7 @@ website:
   title: "Statistics Foundations"
   favicon: "stats-favicon.svg"
   navbar:
+    logo: stats-favicon.png
     left:
       - href: index.qmd
         text: Home
