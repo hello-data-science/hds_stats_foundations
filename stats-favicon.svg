@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background -->
+  <rect x="0" y="0" width="100" height="100" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- Histogram bars -->
+  <rect x="10" y="70" width="15" height="20" fill="#ff6b6b"/>
+  <rect x="25" y="50" width="15" height="40" fill="#4ecdc4"/>
+  <rect x="40" y="30" width="15" height="60" fill="#45b7d1"/>
+  <rect x="55" y="40" width="15" height="50" fill="#96ceb4"/>
+  <rect x="70" y="55" width="15" height="35" fill="#4e97d1"/>
+  
+  <!-- Bell curve -->
+  <path d="M10 70 Q 25 20, 47.5 20 T 85 70" 
+        fill="none" 
+        stroke="#ff9f43" 
+        stroke-width="3"
+        stroke-linecap="round"/>
+  
+  <!-- X-axis (now a single line) -->
+  <line x1="10" y1="90" x2="85" y2="90" stroke="#2d3436" stroke-width="3"/>
+  
+  <!-- Y-axis -->
+  <line x1="10" y1="90" x2="10" y2="20" stroke="#2d3436" stroke-width="3"/>
+</svg>
