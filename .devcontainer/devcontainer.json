@@ -14,5 +14,6 @@
         "ms-toolsai.vscode-jupyter-cell-tags",
         "ms-azuretools.vscode-docker"
     ],
+    "postCreateCommand": "if [ ! -d \"venv\" ]; then python -m venv venv && . venv/bin/activate && pip install --no-cache-dir -r requirements.txt; fi",
     "forwardPorts": []
 }

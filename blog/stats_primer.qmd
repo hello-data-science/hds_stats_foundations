@@ -1,0 +1,21 @@
+---
+title: "A Comprehensive Statistics Primer"
+subtitle: "An Introduction to Fundamental Statistical Concepts"
+description: "This primer covers essential statistical concepts including probability, distributions, hypothesis testing, and regression analysis."
+author: "Alasdair Warwick"
+date: 2025-01-02
+categories: [Probability, Start here, Slides]
+editor: source
+---
+
+## Contents
+
+- ⁠Single sample: probability basics - normal distribution and binomial (coins)
+- ⁠⁠2 samples: normal and chi square
+- Adjusting for confounders - (stratifying) & linear regression. Logistic regression
+
+## Coin
+
+```{python}
+print("Hi")
+```

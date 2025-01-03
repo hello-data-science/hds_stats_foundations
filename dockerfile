@@ -11,23 +11,27 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://github.com/quarto-dev/quarto-cli/releases/download/v1.2.313/quarto-1.2.313-linux-amd64.tar.gz | tar -xz -C /opt \
     && ln -s /opt/quarto-1.2.313/bin/quarto /usr/local/bin/quarto
 
+# Define an argument for the working directory
+ARG WORKDIR=/workspaces/hds_stats_foundations
+
 # Set up the working environment
-WORKDIR /workspace
+WORKDIR $WORKDIR
 
 # Copy the entire repository
 COPY . .
 
-# Create and activate a virtual environment, then install Python dependencies
-RUN python -m venv venv \
+# Remove any existing virtual environment and create a new one, then install Python dependencies
+RUN rm -rf venv \
+    && python -m venv venv \
     && . venv/bin/activate \
     && pip install --no-cache-dir -r requirements.txt
 
 # Set environment variables for venv
-ENV VIRTUAL_ENV=/workspace/venv
-ENV PATH="/workspace/venv/bin:$PATH"
+ENV VIRTUAL_ENV=$WORKDIR/venv
+ENV PATH="$WORKDIR/venv/bin:$PATH"
 
 # Add venv activation to .bashrc for interactive shells
-RUN echo '. /workspace/venv/bin/activate' >> /root/.bashrc
+RUN echo ". $WORKDIR/venv/bin/activate" >> /root/.bashrc
 
 # Set default shell
 SHELL ["/bin/bash", "-c"]
