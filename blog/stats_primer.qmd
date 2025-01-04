@@ -6,6 +6,11 @@ author: "Alasdair Warwick"
 date: 2025-01-02
 categories: [Probability, Start here, Slides]
 editor: source
+format:
+    html:
+        include-in-header:
+            - text: |
+                <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
 ---
 
 ## Contents
@@ -14,7 +19,15 @@ editor: source
 - ⁠⁠2 samples: normal and chi square
 - Adjusting for confounders - (stratifying) & linear regression. Logistic regression
 
-## Coin
+## Coin Flip Simulation
+
+This simulation demonstrates the binomial distribution through repeated coin flips.
+
+::: {.column-page}
+<iframe src="coin-flip.html" width="100%" height="650px" frameBorder="0"></iframe>
+:::
+
+## Next slides
 
 ```{python}
 print("Hi")
