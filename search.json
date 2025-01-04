@@ -21,11 +21,18 @@
     "text": "⁠Single sample: probability basics - normal distribution and binomial (coins)\n⁠⁠2 samples: normal and chi square\nAdjusting for confounders - (stratifying) & linear regression. Logistic regression"
   },
   {
-    "objectID": "blog/stats_primer.html#coin",
-    "href": "blog/stats_primer.html#coin",
+    "objectID": "blog/stats_primer.html#coin-flip-simulation",
+    "href": "blog/stats_primer.html#coin-flip-simulation",
     "title": "A Comprehensive Statistics Primer",
-    "section": "Coin",
-    "text": "Coin\n\n\nCode\nprint(\"Hi\")\n\n\nHi"
+    "section": "Coin Flip Simulation",
+    "text": "Coin Flip Simulation\nThis simulation demonstrates the binomial distribution through repeated coin flips."
+  },
+  {
+    "objectID": "blog/stats_primer.html#next-slides",
+    "href": "blog/stats_primer.html#next-slides",
+    "title": "A Comprehensive Statistics Primer",
+    "section": "Next slides",
+    "text": "Next slides\n\n\nCode\nprint(\"Hi\")\n\n\nHi"
   },
   {
     "objectID": "blog/sampling_variation_se.html",

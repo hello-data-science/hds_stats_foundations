@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div id="controls"></div>
+    <div id="currentRound"></div>
+    <div id="histogram"></div>
+
+    <script type="module">
+        import * as Plot from "https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.20.0/plotly.min.js"
+
+        // Create the main container div and controls
+        const controlsDiv = document.getElementById("controls");
+        controlsDiv.innerHTML = `
+  <button id="flipButton">Flip once</button>
+  <button id="playButton">Play</button>
+  <button id="resetButton">Reset</button>
+  <label>
+    <input type="checkbox" id="multiFlipToggle"> Multi-flip
+  </label>
+  <span id="flipCount"></span>
+`;
+
+        // Initialize state
+        let flips = { heads: 0, tails: 0 };
+        let histogram = Array(11).fill(0);
+        let isPlaying = false;
+        let playInterval;
+
+        // Get DOM elements
+        const flipButton = document.getElementById("flipButton");
+        const playButton = document.getElementById("playButton");
+        const resetButton = document.getElementById("resetButton");
+        const multiFlipToggle = document.getElementById("multiFlipToggle");
+        const flipCountSpan = document.getElementById("flipCount");
+
+        // Create initial plots
+        const currentRoundTrace = {
+            x: ['Heads', 'Tails'],
+            y: [0, 0],
+            type: 'bar',
+            marker: {
+                color: ['#8884d8', '#8884d8']
+            }
+        };
+
+        const currentRoundLayout = {
+            title: 'Current Round',
+            yaxis: {
+                range: [0, 10],
+                dtick: 1,
+                title: 'Count'
+            },
+            width: 300,
+            height: 300,  // Increased height
+            margin: {
+                l: 50,
+                r: 30,
+                t: 40,
+                b: 40
+            }
+        };
+
+        Plotly.newPlot('currentRound', [currentRoundTrace], currentRoundLayout);
+
+        const histogramTrace = {
+            x: Array.from({ length: 11 }, (_, i) => i),
+            y: Array(11).fill(0),
+            type: 'bar',
+            marker: {
+                color: '#82ca9d'
+            }
+        };
+
+        const histogramLayout = {
+            title: 'Distribution of Heads (Across Completed Rounds)',
+            xaxis: {
+                title: 'Number of Heads',
+                range: [-0.5, 10.5],
+                dtick: 1
+            },
+            yaxis: {
+                title: 'Frequency',
+                rangemode: 'nonnegative',  // Forces minimum y to 0
+                dtick: 1
+            },
+            width: 500,
+            height: 300,
+            margin: {
+                l: 50,
+                r: 30,
+                t: 40,
+                b: 40
+            }
+        };
+
+        Plotly.newPlot('histogram', [histogramTrace], histogramLayout);
+
+        // Helper function for single flip
+        function singleFlip() {
+            const result = Math.random() < 0.5 ? 'heads' : 'tails';
+            flips[result]++;
+
+            updateCurrentRound();
+
+            if (flips.heads + flips.tails === 10) {
+                histogram[flips.heads]++;
+                updateHistogram();
+                flips = { heads: 0, tails: 0 };
+            }
+        }
+
+        // Helper function for multi flip
+        function multiFlip() {
+            let newHeads = 0;
+            for (let i = 0; i < 10; i++) {
+                if (Math.random() < 0.5) newHeads++;
+            }
+            flips = { heads: newHeads, tails: 10 - newHeads };
+            histogram[newHeads]++;
+
+            updateCurrentRound();
+            updateHistogram();
+            flips = { heads: 0, tails: 0 };
+        }
+
+        // Update functions
+        function updateCurrentRound() {
+            const update = {
+                y: [[flips.heads, flips.tails]]
+            };
+            Plotly.update('currentRound', update);
+
+            if (!multiFlipToggle.checked) {
+                flipCountSpan.textContent = `Total flips: ${flips.heads + flips.tails}/10`;
+            }
+        }
+
+        function updateHistogram() {
+            const update = {
+                y: [histogram]
+            };
+            Plotly.update('histogram', update);
+        }
+
+        // Event listeners
+        flipButton.addEventListener('click', () => {
+            if (multiFlipToggle.checked) {
+                multiFlip();
+            } else {
+                singleFlip();
+            }
+        });
+
+        playButton.addEventListener('click', () => {
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playButton.textContent = 'Play';
+                flipButton.disabled = false;
+            } else {
+                playButton.textContent = 'Stop';
+                flipButton.disabled = true;
+                playInterval = setInterval(() => {
+                    if (multiFlipToggle.checked) {
+                        multiFlip();
+                    } else {
+                        singleFlip();
+                    }
+                }, 1000);
+            }
+            isPlaying = !isPlaying;
+        });
+
+        resetButton.addEventListener('click', () => {
+            flips = { heads: 0, tails: 0 };
+            histogram = Array(11).fill(0);
+            updateCurrentRound();
+            updateHistogram();
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playButton.textContent = 'Play';
+                flipButton.disabled = false;
+                isPlaying = false;
+            }
+            flipCountSpan.textContent = 'Total flips: 0/10';
+        });
+
+        multiFlipToggle.addEventListener('change', () => {
+            flipButton.textContent = multiFlipToggle.checked ? 'Flip 10 times' : 'Flip once';
+            if (multiFlipToggle.checked) {
+                flipCountSpan.textContent = '';
+            } else {
+                flipCountSpan.textContent = `Total flips: ${flips.heads + flips.tails}/10`;
+            }
+        });
+    </script>
+</body>
+
+</html>

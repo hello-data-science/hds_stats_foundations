@@ -127,6 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -190,12 +191,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#contents" id="toc-contents" class="nav-link active" data-scroll-target="#contents">Contents</a></li>
-  <li><a href="#coin" id="toc-coin" class="nav-link" data-scroll-target="#coin">Coin</a></li>
+  <li><a href="#coin-flip-simulation" id="toc-coin-flip-simulation" class="nav-link" data-scroll-target="#coin-flip-simulation">Coin Flip Simulation</a></li>
+  <li><a href="#next-slides" id="toc-next-slides" class="nav-link" data-scroll-target="#next-slides">Next slides</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/hello-data-science/hds_stats_foundations/edit/main/blog/stats_primer.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/hello-data-science/hds_stats_foundations/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -245,8 +247,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Adjusting for confounders - (stratifying) &amp; linear regression. Logistic regression</li>
 </ul>
 </section>
-<section id="coin" class="level2">
-<h2 class="anchored" data-anchor-id="coin">Coin</h2>
+<section id="coin-flip-simulation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="coin-flip-simulation">Coin Flip Simulation</h2>
+<p>This simulation demonstrates the binomial distribution through repeated coin flips.</p>
+<div class="column-page">
+<iframe src="coin-flip.html" width="100%" height="650px" frameborder="0">
+</iframe>
+</div>
+</section>
+<section id="next-slides" class="level2">
+<h2 class="anchored" data-anchor-id="next-slides">Next slides</h2>
 <div class="cell" data-execution_count="1">
 <details>
 <summary>Code</summary>
