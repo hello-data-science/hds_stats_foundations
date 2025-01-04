@@ -39,5 +39,10 @@ format:
       source: repo
       toggle: true
       caption: Code
+  revealjs:
+    code-fold: true
+    code-link: true
+    echo: true
+    logo: stats-favicon.png
 
 editor: source

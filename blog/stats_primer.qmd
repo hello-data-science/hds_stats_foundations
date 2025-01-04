@@ -7,7 +7,7 @@ date: 2025-01-02
 categories: [Probability, Start here, Slides]
 editor: source
 format:
-    html:
+    revealjs:
         include-in-header:
             - text: |
                 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
@@ -19,7 +19,7 @@ format:
 - ⁠⁠2 samples: normal and chi square
 - Adjusting for confounders - (stratifying) & linear regression. Logistic regression
 
-## Coin Flip Simulation
+## Coin Flip Simulation {.scrollable}
 
 This simulation demonstrates the binomial distribution through repeated coin flips.
 
@@ -28,6 +28,8 @@ This simulation demonstrates the binomial distribution through repeated coin fli
 :::
 
 ## Next slides
+
+To do
 
 ```{python}
 print("Hi")

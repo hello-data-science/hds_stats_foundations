@@ -1,38 +1,120 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+</head>
+
 <body>
     <div id="controls"></div>
     <div id="currentRound"></div>
     <div id="histogram"></div>
 
     <script type="module">
-        import * as Plot from "https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.20.0/plotly.min.js"
-
-        // Create the main container div and controls
-        const controlsDiv = document.getElementById("controls");
-        controlsDiv.innerHTML = `
-  <button id="flipButton">Flip once</button>
-  <button id="playButton">Play</button>
-  <button id="resetButton">Reset</button>
-  <label>
-    <input type="checkbox" id="multiFlipToggle"> Multi-flip
-  </label>
-  <span id="flipCount"></span>
-`;
-
         // Initialize state
-        let flips = { heads: 0, tails: 0 };
-        let histogram = Array(11).fill(0);
-        let isPlaying = false;
-        let playInterval;
+        const state = {
+            flips: { heads: 0, tails: 0 },
+            histogram: Array(11).fill(0),
+            isPlaying: false,
+            playInterval: null,
+            probability: 0.5
+        };
 
-        // Get DOM elements
-        const flipButton = document.getElementById("flipButton");
-        const playButton = document.getElementById("playButton");
-        const resetButton = document.getElementById("resetButton");
-        const multiFlipToggle = document.getElementById("multiFlipToggle");
-        const flipCountSpan = document.getElementById("flipCount");
+        // Create UI controls
+        const controlsDiv = document.getElementById('controls');
+        controlsDiv.innerHTML = `
+            <div id="probabilityControls">
+                <label for="probabilitySelect">Select Probability: </label>
+                <select id="probabilitySelect">
+                    ${[...Array(9).keys()].map(i => {
+            const prob = (i + 1) / 10;
+            return `<option value="${prob}" ${prob === 0.5 ? 'selected' : ''}>${prob}</option>`;
+        }).join('')}
+                </select>
+            </div>
+            <button id="flipButton">Flip once</button>
+            <button id="playButton">Play</button>
+            <button id="resetButton">Reset</button>
+            <label>
+                <input type="checkbox" id="multiFlipToggle"> Multi-flip
+            </label>
+            <span id="flipCount">Total flips: 0/10</span>
+        `;
+
+        // Add event listeners
+        const flipButton = document.getElementById('flipButton');
+        const playButton = document.getElementById('playButton');
+        const resetButton = document.getElementById('resetButton');
+        const multiFlipToggle = document.getElementById('multiFlipToggle');
+        const flipCountSpan = document.getElementById('flipCount');
+        const probabilitySelect = document.getElementById('probabilitySelect');
+
+        probabilitySelect.addEventListener('change', (event) => {
+            const newProbability = parseFloat(event.target.value);
+            if (newProbability !== state.probability) {
+                const confirmChange = confirm('Changing the probability will reset all results to zero. Do you want to proceed?');
+                if (confirmChange) {
+                    state.probability = newProbability;
+                    state.flips = { heads: 0, tails: 0 };
+                    state.histogram = Array(11).fill(0);
+                    updateCurrentRound();
+                    updateHistogram();
+                    flipCountSpan.textContent = 'Total flips: 0/10';
+                } else {
+                    // Revert the dropdown selection
+                    event.target.value = state.probability;
+                }
+            }
+        });
+
+        flipButton.addEventListener('click', () => {
+            if (multiFlipToggle.checked) {
+                multiFlip();
+            } else {
+                singleFlip();
+            }
+            updateHistogram();
+            flipCountSpan.textContent = `Total flips: ${state.flips.heads + state.flips.tails}/10`;
+        });
+
+        playButton.addEventListener('click', () => {
+            if (state.isPlaying) {
+                clearInterval(state.playInterval);
+                playButton.textContent = 'Play';
+                flipButton.disabled = false;
+            } else {
+                state.playInterval = setInterval(() => {
+                    if (multiFlipToggle.checked) {
+                        multiFlip();
+                    } else {
+                        singleFlip();
+                    }
+                    updateHistogram();
+                    flipCountSpan.textContent = `Total flips: ${state.flips.heads + state.flips.tails}/10`;
+                }, 1000);
+                playButton.textContent = 'Pause';
+            }
+            state.isPlaying = !state.isPlaying;
+        });
+
+        resetButton.addEventListener('click', () => {
+            clearInterval(state.playInterval);
+            state.isPlaying = false;
+            state.flips = { heads: 0, tails: 0 };
+            state.histogram = Array(11).fill(0);
+            updateHistogram();
+            flipCountSpan.textContent = 'Total flips: 0/10';
+            playButton.textContent = 'Play';
+        });
+
+        multiFlipToggle.addEventListener('change', () => {
+            flipButton.textContent = multiFlipToggle.checked ? 'Flip 10 times' : 'Flip once';
+            if (multiFlipToggle.checked) {
+                flipCountSpan.textContent = '';
+            } else {
+                flipCountSpan.textContent = `Total flips: ${state.flips.heads + state.flips.tails}/10`;
+            }
+        });
 
         // Create initial plots
         const currentRoundTrace = {
@@ -52,7 +134,7 @@
                 title: 'Count'
             },
             width: 300,
-            height: 300,  // Increased height
+            height: 300,
             margin: {
                 l: 50,
                 r: 30,
@@ -81,7 +163,7 @@
             },
             yaxis: {
                 title: 'Frequency',
-                rangemode: 'nonnegative',  // Forces minimum y to 0
+                rangemode: 'nonnegative',
                 dtick: 1
             },
             width: 500,
@@ -98,15 +180,14 @@
 
         // Helper function for single flip
         function singleFlip() {
-            const result = Math.random() < 0.5 ? 'heads' : 'tails';
-            flips[result]++;
-
+            const result = Math.random() < state.probability ? 'heads' : 'tails';
+            state.flips[result]++;
             updateCurrentRound();
 
-            if (flips.heads + flips.tails === 10) {
-                histogram[flips.heads]++;
+            if (state.flips.heads + state.flips.tails === 10) {
+                state.histogram[state.flips.heads]++;
                 updateHistogram();
-                flips = { heads: 0, tails: 0 };
+                state.flips = { heads: 0, tails: 0 };
             }
         }
 
@@ -114,85 +195,33 @@
         function multiFlip() {
             let newHeads = 0;
             for (let i = 0; i < 10; i++) {
-                if (Math.random() < 0.5) newHeads++;
+                if (Math.random() < state.probability) newHeads++;
             }
-            flips = { heads: newHeads, tails: 10 - newHeads };
-            histogram[newHeads]++;
-
+            state.flips = { heads: newHeads, tails: 10 - newHeads };
+            state.histogram[newHeads]++;
             updateCurrentRound();
             updateHistogram();
-            flips = { heads: 0, tails: 0 };
+            state.flips = { heads: 0, tails: 0 };
         }
 
         // Update functions
         function updateCurrentRound() {
             const update = {
-                y: [[flips.heads, flips.tails]]
+                y: [[state.flips.heads, state.flips.tails]]
             };
             Plotly.update('currentRound', update);
 
             if (!multiFlipToggle.checked) {
-                flipCountSpan.textContent = `Total flips: ${flips.heads + flips.tails}/10`;
+                flipCountSpan.textContent = `Total flips: ${state.flips.heads + state.flips.tails}/10`;
             }
         }
 
         function updateHistogram() {
             const update = {
-                y: [histogram]
+                y: [state.histogram]
             };
             Plotly.update('histogram', update);
         }
-
-        // Event listeners
-        flipButton.addEventListener('click', () => {
-            if (multiFlipToggle.checked) {
-                multiFlip();
-            } else {
-                singleFlip();
-            }
-        });
-
-        playButton.addEventListener('click', () => {
-            if (isPlaying) {
-                clearInterval(playInterval);
-                playButton.textContent = 'Play';
-                flipButton.disabled = false;
-            } else {
-                playButton.textContent = 'Stop';
-                flipButton.disabled = true;
-                playInterval = setInterval(() => {
-                    if (multiFlipToggle.checked) {
-                        multiFlip();
-                    } else {
-                        singleFlip();
-                    }
-                }, 1000);
-            }
-            isPlaying = !isPlaying;
-        });
-
-        resetButton.addEventListener('click', () => {
-            flips = { heads: 0, tails: 0 };
-            histogram = Array(11).fill(0);
-            updateCurrentRound();
-            updateHistogram();
-            if (isPlaying) {
-                clearInterval(playInterval);
-                playButton.textContent = 'Play';
-                flipButton.disabled = false;
-                isPlaying = false;
-            }
-            flipCountSpan.textContent = 'Total flips: 0/10';
-        });
-
-        multiFlipToggle.addEventListener('change', () => {
-            flipButton.textContent = multiFlipToggle.checked ? 'Flip 10 times' : 'Flip once';
-            if (multiFlipToggle.checked) {
-                flipCountSpan.textContent = '';
-            } else {
-                flipCountSpan.textContent = `Total flips: ${flips.heads + flips.tails}/10`;
-            }
-        });
     </script>
 </body>
 
