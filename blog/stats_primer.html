@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.2.313">
 
   <meta name="author" content="Alasdair Warwick">
-  <title>Statistics Foundations - A Comprehensive Statistics Primer</title>
+  <title>Statistics Foundations - Discovering Statistics: An Interactive Primer</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -390,8 +390,8 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">A Comprehensive Statistics Primer</h1>
-  <p class="subtitle">An Introduction to Fundamental Statistical Concepts</p>
+  <h1 class="title">Discovering Statistics: An Interactive Primer</h1>
+  <p class="subtitle">Building Intuition for Basic Concepts</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -403,24 +403,66 @@ Alasdair Warwick
 
   <p class="date">1/2/25</p>
 </section>
-<section id="contents" class="slide level2">
-<h2>Contents</h2>
+<section id="contents" class="title-slide slide level1 center">
+<h1>Contents</h1>
 <ul>
 <li>⁠Single sample: probability basics - normal distribution and binomial (coins)</li>
 <li>⁠⁠2 samples: normal and chi square</li>
 <li>Adjusting for confounders - (stratifying) &amp; linear regression. Logistic regression</li>
 </ul>
 </section>
-<section id="coin-flip-simulation" class="slide level2 scrollable">
-<h2>Coin Flip Simulation</h2>
+
+<section>
+<section id="coin-flip-simulation" class="title-slide slide level1 scrollable center">
+<h1>Coin Flip Simulation</h1>
 <p>This simulation demonstrates the binomial distribution through repeated coin flips.</p>
 <div class="column-page">
 <iframe src="coin-flip.html" width="100%" height="680px" frameborder="0">
 </iframe>
 </div>
+<aside class="notes">
+<div class="callout callout-tip callout-captioned callout-style-default">
+<div class="callout-body">
+<div class="callout-caption">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Try this</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li>Flip a coin 10 times</li>
+<li>Click ‘Play’ to repeat the experiment (select the ‘Multi-flip’ check box to perform 10 coin flips each time)</li>
+</ul>
+</div>
+</div>
+</div>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="next-slides" class="slide level2">
-<h2>Next slides</h2>
+<section id="binomial-distribution" class="slide level2 smaller">
+<h2>Binomial distribution</h2>
+<p>The binomial distribution is given by the formula:</p>
+<p><span class="math display">\[ P(X = k) = \binom{n}{k} p^k (1-p)^{n-k} \]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(P(X = k)\)</span> is the probability of getting exactly <span class="math inline">\(k\)</span> successes in <span class="math inline">\(n\)</span> trials.</li>
+<li><span class="math inline">\(\binom{n}{k}\)</span> is the binomial coefficient, which represents the number of ways to choose <span class="math inline">\(k\)</span> successes from <span class="math inline">\(n\)</span> trials.</li>
+<li><span class="math inline">\(p\)</span> is the probability of success on a single trial.</li>
+<li><span class="math inline">\((1-p)\)</span> is the probability of failure on a single trial.</li>
+</ul>
+</section></section>
+<section id="next-slides" class="title-slide slide level1 center">
+<h1>Next slides</h1>
 <p>To do</p>
 <div class="cell" data-execution_count="1">
 <details>
@@ -433,7 +475,7 @@ Alasdair Warwick
 </div>
 
 
-<img src="stats-favicon.png" class="slide-logo r-stretch"><div class="footer footer-default">
+<img src="../stats-favicon.png" class="slide-logo r-stretch"><div class="footer footer-default">
 
 </div>
 </section>
@@ -530,7 +572,7 @@ Alasdair Warwick
         rtl: false,
 
         // see https://revealjs.com/vertical-slides/#navigation-mode
-        navigationMode: 'linear',
+        navigationMode: 'default',
 
         // Randomizes the order of slides each time the presentation loads
         shuffle: false,
