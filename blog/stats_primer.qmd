@@ -8,7 +8,12 @@ categories: [Probability, Start here, Slides]
 editor: source
 format:
     revealjs:
-        navigation-mode: vertical
+        theme: simple
+        transition: fade
+        transition-speed: fast
+        chalkboard: true
+        smaller: true
+        scrollable: true
         code-fold: true
         code-link: true
         echo: true
@@ -18,18 +23,18 @@ format:
                 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
 ---
 
-# Contents
+## Contents
 
 - ⁠Single sample: probability basics - normal distribution and binomial (coins)
 - ⁠⁠2 samples: normal and chi square
 - Adjusting for confounders - (stratifying) & linear regression. Logistic regression
 
-# Coin Flip Simulation {.scrollable}
+## Coin Flip Simulation
 
 This simulation demonstrates the binomial distribution through repeated coin flips.
 
 ::: {.column-page}
-<iframe src="coin-flip.html" width="100%" height="680px" frameBorder="0"></iframe>
+<iframe src="../resources/coin-flip.html" width="100%" height="680px" frameBorder="0"></iframe>
 :::
 
 ::: {.notes}
@@ -43,7 +48,7 @@ This simulation demonstrates the binomial distribution through repeated coin fli
 
 :::
 
-## Binomial distribution {.smaller}
+## Binomial distribution {background-color="lightblue" visibility="uncounted"}
 
 The binomial distribution is given by the formula:
 
@@ -56,7 +61,7 @@ Where:
 - $p$ is the probability of success on a single trial.
 - $(1-p)$ is the probability of failure on a single trial.
 
-# Next slides
+## Next slides
 
 To do
 
