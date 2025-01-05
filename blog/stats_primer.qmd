@@ -8,6 +8,10 @@ categories: [Probability, Start here, Slides]
 editor: source
 format:
     revealjs:
+        code-fold: true
+        code-link: true
+        echo: true
+        logo: stats-favicon.png
         include-in-header:
             - text: |
                 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
@@ -24,7 +28,7 @@ format:
 This simulation demonstrates the binomial distribution through repeated coin flips.
 
 ::: {.column-page}
-<iframe src="coin-flip.html" width="100%" height="650px" frameBorder="0"></iframe>
+<iframe src="coin-flip.html" width="100%" height="680px" frameBorder="0"></iframe>
 :::
 
 ## Next slides
