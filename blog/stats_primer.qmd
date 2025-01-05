@@ -1,29 +1,30 @@
 ---
-title: "A Comprehensive Statistics Primer"
-subtitle: "An Introduction to Fundamental Statistical Concepts"
-description: "This primer covers essential statistical concepts including probability, distributions, hypothesis testing, and regression analysis."
+title: "Discovering Statistics: An Interactive Primer"
+subtitle: "Building Intuition for Basic Concepts"
+description: "This primer uses hands on examples to explore essential statistical concepts including probability, distributions, hypothesis testing, and regression analysis."
 author: "Alasdair Warwick"
 date: 2025-01-02
 categories: [Probability, Start here, Slides]
 editor: source
 format:
     revealjs:
+        navigation-mode: vertical
         code-fold: true
         code-link: true
         echo: true
-        logo: stats-favicon.png
+        logo: "../stats-favicon.png"
         include-in-header:
             - text: |
                 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
 ---
 
-## Contents
+# Contents
 
 - ⁠Single sample: probability basics - normal distribution and binomial (coins)
 - ⁠⁠2 samples: normal and chi square
 - Adjusting for confounders - (stratifying) & linear regression. Logistic regression
 
-## Coin Flip Simulation {.scrollable}
+# Coin Flip Simulation {.scrollable}
 
 This simulation demonstrates the binomial distribution through repeated coin flips.
 
@@ -31,7 +32,31 @@ This simulation demonstrates the binomial distribution through repeated coin fli
 <iframe src="coin-flip.html" width="100%" height="680px" frameBorder="0"></iframe>
 :::
 
-## Next slides
+::: {.notes}
+
+::: {.callout-tip}
+## Try this
+
+- Flip a coin 10 times
+- Click 'Play' to repeat the experiment (select the 'Multi-flip' check box to perform 10 coin flips each time)
+:::
+
+:::
+
+## Binomial distribution {.smaller}
+
+The binomial distribution is given by the formula:
+
+$$ P(X = k) = \binom{n}{k} p^k (1-p)^{n-k} $$
+
+Where:
+
+- $P(X = k)$ is the probability of getting exactly $k$ successes in $n$ trials.
+- $\binom{n}{k}$ is the binomial coefficient, which represents the number of ways to choose $k$ successes from $n$ trials.
+- $p$ is the probability of success on a single trial.
+- $(1-p)$ is the probability of failure on a single trial.
+
+# Next slides
 
 To do
 
