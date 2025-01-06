@@ -87,13 +87,30 @@ viewof specificity = Inputs.range([50, 100], {
 grid = {
   const totalDots = 100;
   const diseaseCount = Math.round(totalDots * (prevalence / 100));
-  
+  const noDiseaseCount = totalDots - diseaseCount;
+
   const expectedTruePositives = Math.round(diseaseCount * (sensitivity / 100));
-  const expectedFalsePositives = Math.round((totalDots - diseaseCount) * ((100 - specificity) / 100));
-  
+  const expectedFalsePositives = Math.round(noDiseaseCount * ((100 - specificity) / 100));
+
+  // Create an array of indices for the population
+  const indices = Array.from({ length: totalDots }, (_, index) => index);
+
+  // Shuffle the indices randomly
+  const shuffledIndices = indices.sort(() => Math.random() - 0.5);
+
+  // Assign disease status based on the first `diseaseCount` indices
+  const hasDisease = new Set(shuffledIndices.slice(0, diseaseCount));
+
+  // Separate true positives and false positives
+  const truePositiveIndices = Array.from(hasDisease).slice(0, expectedTruePositives);
+  const falsePositiveIndices = shuffledIndices
+    .filter(index => !hasDisease.has(index))
+    .slice(0, expectedFalsePositives);
+
+  // Create the dots array with proper properties
   const dots = Array(totalDots).fill(null).map((_, index) => ({
-    hasDisease: index < diseaseCount,
-    testPositive: index < (expectedTruePositives + expectedFalsePositives)
+    hasDisease: hasDisease.has(index),
+    testPositive: truePositiveIndices.includes(index) || falsePositiveIndices.includes(index),
   }));
   
   // Calculate statistics
