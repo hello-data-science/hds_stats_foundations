@@ -3,12 +3,30 @@
 
 <head>
     <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+    <style>
+        .plots-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 0px;
+            margin-top: 20px;
+        }
+
+        .plot-column {
+            flex: 1;
+        }
+    </style>
 </head>
 
 <body>
     <div id="controls"></div>
-    <div id="currentRound"></div>
-    <div id="histogram"></div>
+    <div class="plots-container">
+        <div class="plot-column">
+            <div id="currentRound"></div>
+        </div>
+        <div class="plot-column">
+            <div id="histogram"></div>
+        </div>
+    </div>
 
     <script type="module">
         // Initialize state
@@ -133,7 +151,7 @@
                 dtick: 1,
                 title: 'Count'
             },
-            width: 300,
+            width: 400,
             height: 300,
             margin: {
                 l: 50,
@@ -166,12 +184,12 @@
                 rangemode: 'nonnegative',
                 dtick: 1
             },
-            width: 500,
+            width: 450,
             height: 300,
             margin: {
                 l: 50,
-                r: 30,
-                t: 40,
+                r: 50,
+                t: 50,
                 b: 40
             }
         };
