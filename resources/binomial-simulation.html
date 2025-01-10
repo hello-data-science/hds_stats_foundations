@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+    <style>
+        .plots-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .plot-column {
+            flex: 1;
+        }
+
+        .controls-row {
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #4CAF50;
+            transition: width 0.1s ease-in-out;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Basic Structure -->
+    <div id="controls">
+        <div class="controls-row">
+            <label for="probabilitySelect">Probability of Heads: </label>
+            <select id="probabilitySelect">
+                <option value="0.1">0.1</option>
+                <option value="0.2">0.2</option>
+                <option value="0.3">0.3</option>
+                <option value="0.4">0.4</option>
+                <option value="0.5" selected>0.5</option>
+                <option value="0.6">0.6</option>
+                <option value="0.7">0.7</option>
+                <option value="0.8">0.8</option>
+                <option value="0.9">0.9</option>
+            </select>
+        </div>
+        <div class="controls-row">
+            <label for="flipsSelect">Number of Flips per Trial: </label>
+            <select id="flipsSelect">
+                <option value="10" selected>10</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+        </div>
+        <div class="controls-row">
+            <label for="trialsSelect">Number of Trials: </label>
+            <select id="trialsSelect">
+                <option value="100">100</option>
+                <option value="500">500</option>
+                <option value="1000" selected>1000</option>
+                <option value="2000">2000</option>
+                <option value="5000">5000</option>
+                <option value="10000">10000</option>
+            </select>
+            <button onclick="simulate()">Simulate</button>
+        </div>
+    </div>
+
+    <div class="plots-container">
+        <div class="plot-column">
+            <div id="empiricalHistogram"></div>
+        </div>
+        <div class="plot-column">
+            <div id="theoreticalHistogram"></div>
+        </div>
+    </div>
+    <div class="progress-container">
+        <div class="progress-bar"></div>
+    </div>
+
+    <script>
+        // Update state object and initialization
+        const state = {
+            flipsPerTrial: 10,
+            histogram: Array(11).fill(0),
+            theoreticalHist: Array(11).fill(0),
+            probability: 0.5,
+            totalTrials: 0,
+            maxTrials: 1000
+        };
+
+        // Initialize arrays for new number of flips
+        function initializeArrays() {
+            const size = state.flipsPerTrial + 1;
+            state.histogram = Array(size).fill(0);
+            state.theoreticalHist = Array(size).fill(0);
+
+            // Update plot data arrays
+            Plotly.update('empiricalHistogram', {
+                x: [Array.from({ length: size }, (_, i) => i)],
+                y: [Array(size).fill(0)]
+            });
+
+            Plotly.update('theoreticalHistogram', {
+                x: [Array.from({ length: size }, (_, i) => i)],
+                y: [Array(size).fill(0)]
+            });
+        }
+
+        // Initialize plots
+        const plotConfig = { displayModeBar: false };
+
+        // Initial plot setup
+        function initializePlots() {
+            Plotly.newPlot('empiricalHistogram', [{
+                x: Array.from({ length: state.flipsPerTrial + 1 }, (_, i) => i),
+                y: Array(state.flipsPerTrial + 1).fill(0),
+                type: 'bar',
+                marker: { color: '#82ca9d' }
+            }], {
+                title: 'Empirical Distribution',
+                xaxis: { title: 'Number of Heads', range: [-0.5, state.flipsPerTrial + 0.5], dtick: 1 },
+                yaxis: { title: 'Frequency', rangemode: 'nonnegative' },
+                width: 450,
+                height: 300,
+                margin: { l: 50, r: 50, t: 50, b: 40 }
+            }, plotConfig);
+
+            Plotly.newPlot('theoreticalHistogram', [{
+                x: Array.from({ length: state.flipsPerTrial + 1 }, (_, i) => i),
+                y: Array(state.flipsPerTrial + 1).fill(0),
+                type: 'bar',
+                marker: { color: '#8884d8' }
+            }], {
+                title: 'Theoretical Distribution',
+                xaxis: { title: 'Number of Heads', range: [-0.5, state.flipsPerTrial + 0.5], dtick: 1 },
+                yaxis: { title: 'Frequency', rangemode: 'nonnegative' },
+                width: 450,
+                height: 300,
+                margin: { l: 50, r: 50, t: 50, b: 40 }
+            }, plotConfig);
+        }
+
+        initializePlots();
+
+        // Update simulation function
+        function simulate() {
+            state.flipsPerTrial = parseInt(document.getElementById('flipsSelect').value);
+            state.maxTrials = parseInt(document.getElementById('trialsSelect').value);
+            state.probability = parseFloat(document.getElementById('probabilitySelect').value);
+            state.totalTrials = 0;
+
+            initializeArrays();
+            updatePlotRanges();
+
+            document.querySelector('.progress-container').style.display = 'block';
+
+            function step() {
+                const batchSize = 50;
+                for (let i = 0; i < batchSize && state.totalTrials < state.maxTrials; i++) {
+                    let heads = 0;
+                    for (let j = 0; j < state.flipsPerTrial; j++) {
+                        if (Math.random() < state.probability) heads++;
+                    }
+                    state.histogram[heads]++;
+                    state.totalTrials++;
+                }
+
+                updateHistograms();
+
+                const progress = (state.totalTrials / state.maxTrials) * 100;
+                document.querySelector('.progress-bar').style.width = `${progress}%`;
+
+                if (state.totalTrials < state.maxTrials) {
+                    requestAnimationFrame(step);
+                } else {
+                    document.querySelector('.progress-container').style.display = 'none';
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        // Update plot ranges based on flipsPerTrial
+        function updatePlotRanges() {
+            const newLayout = {
+                xaxis: {
+                    title: 'Number of Heads',
+                    range: [-0.5, state.flipsPerTrial + 0.5],
+                    dtick: Math.max(1, Math.floor(state.flipsPerTrial / 10))
+                }
+            };
+
+            Plotly.relayout('empiricalHistogram', newLayout);
+            Plotly.relayout('theoreticalHistogram', newLayout);
+        }
+
+        // Add these helper functions
+        function logFactorial(n) {
+            if (n < 0) return NaN;
+            let sum = 0;
+            for (let i = 1; i <= n; i++) {
+                sum += Math.log(i);
+            }
+            return sum;
+        }
+
+        function binomialProbability(n, k, p) {
+            // Use log arithmetic for numerical stability
+            const logCoef = logFactorial(n) - logFactorial(k) - logFactorial(n - k);
+            const logProb = k * Math.log(p) + (n - k) * Math.log(1 - p);
+            return Math.exp(logCoef + logProb);
+        }
+
+        // Update histograms function
+        function updateHistograms() {
+            // Calculate theoretical distribution
+            const n = state.flipsPerTrial;
+            state.theoreticalHist = Array(n + 1).fill(0).map((_, k) => {
+                return Math.round(state.totalTrials * binomialProbability(n, k, state.probability));
+            });
+
+            const maxY = Math.max(...state.histogram, ...state.theoreticalHist);
+            const dtick = maxY > 10 ? 10 : 1;
+
+            Plotly.update('empiricalHistogram',
+                { y: [state.histogram] },
+                {
+                    'xaxis.range': [-0.5, state.flipsPerTrial + 0.5],
+                    'xaxis.dtick': Math.max(1, Math.floor(state.flipsPerTrial / 10)),
+                    'yaxis.dtick': dtick
+                }
+            );
+
+            Plotly.update('theoreticalHistogram',
+                { y: [state.theoreticalHist] },
+                {
+                    'xaxis.range': [-0.5, state.flipsPerTrial + 0.5],
+                    'xaxis.dtick': Math.max(1, Math.floor(state.flipsPerTrial / 10)),
+                    'yaxis.dtick': dtick
+                }
+            );
+        }
+
+        // Helper function
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            return n * factorial(n - 1);
+        }
+    </script>
+</body>
+
+</html>
