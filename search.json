@@ -32,6 +32,13 @@
     "href": "blog/stats_primer.html#binomial-distribution",
     "title": "Discovering Statistics: An Interactive Primer",
     "section": "Binomial distribution",
+    "text": "Binomial distribution"
+  },
+  {
+    "objectID": "blog/stats_primer.html#binomial-distribution-1",
+    "href": "blog/stats_primer.html#binomial-distribution-1",
+    "title": "Discovering Statistics: An Interactive Primer",
+    "section": "Binomial distribution",
     "text": "Binomial distribution\nThe binomial distribution is given by the formula:\n\\[ P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} \\]\nWhere:\n\n\\(P(X = k)\\) is the probability of getting exactly \\(k\\) successes in \\(n\\) trials.\n\\(\\binom{n}{k}\\) is the binomial coefficient, which represents the number of ways to choose \\(k\\) successes from \\(n\\) trials.\n\\(p\\) is the probability of success on a single trial.\n\\((1-p)\\) is the probability of failure on a single trial."
   },
   {
