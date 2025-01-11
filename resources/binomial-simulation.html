@@ -32,6 +32,14 @@
             transition: width 0.1s ease-in-out;
             border-radius: 4px;
         }
+
+        .stats-box {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            font-family: sans-serif;
+        }
     </style>
 </head>
 
@@ -76,9 +84,17 @@
     <div class="plots-container">
         <div class="plot-column">
             <div id="empiricalHistogram"></div>
+            <div id="empiricalStats" class="stats-box">
+                Mean number of heads: <br>
+                95% confidence interval:
+            </div>
         </div>
         <div class="plot-column">
             <div id="theoreticalHistogram"></div>
+            <div id="theoreticalStats" class="stats-box">
+                Mean number of heads: <br>
+                95% confidence interval:
+            </div>
         </div>
     </div>
     <div class="progress-container">
@@ -228,7 +244,7 @@
             });
 
             const maxY = Math.max(...state.histogram, ...state.theoreticalHist);
-            const dtick = maxY > 10 ? 10 : 1;
+            const dtick = maxY > 200 ? 50 : maxY > 100 ? 20 : maxY > 10 ? 10 : 1;
 
             Plotly.update('empiricalHistogram',
                 { y: [state.histogram] },
@@ -247,12 +263,127 @@
                     'yaxis.dtick': dtick
                 }
             );
+
+            updatePlots();
         }
 
         // Helper function
         function factorial(n) {
             if (n === 0 || n === 1) return 1;
             return n * factorial(n - 1);
+        }
+
+        // Add these helper functions
+        function calculateEmpiricalStats() {
+            const n = state.flipsPerTrial;
+            const data = [];
+
+            // Expand histogram into array of values
+            state.histogram.forEach((count, heads) => {
+                for (let i = 0; i < count; i++) {
+                    data.push(heads);
+                }
+            });
+
+            // Calculate mean
+            const mean = data.reduce((a, b) => a + b, 0) / data.length;
+
+            // Calculate CI
+            data.sort((a, b) => a - b);
+            const lowerIndex = Math.floor(data.length * 0.025);
+            const upperIndex = Math.ceil(data.length * 0.975);
+            const ci = [data[lowerIndex], data[upperIndex]];
+
+            return { mean, ci };
+        }
+
+        function calculateTheoreticalStats() {
+            const n = state.flipsPerTrial;
+            const p = state.probability;
+
+            // Binomial mean
+            const mean = n * p;
+
+            // Binomial 95% CI using normal approximation
+            const sd = Math.sqrt(n * p * (1 - p));
+            const ci = [
+                mean - 1.96 * sd,
+                mean + 1.96 * sd
+            ];
+
+            return { mean, ci };
+        }
+
+        function updatePlots() {
+            const empiricalStats = calculateEmpiricalStats();
+            const theoreticalStats = calculateTheoreticalStats();
+
+            // Update stats displays
+            document.getElementById('empiricalStats').innerHTML = `
+                Mean number of heads: ${empiricalStats.mean.toFixed(2)}<br>
+                95% CI: ${empiricalStats.ci[0].toFixed(1)} - ${empiricalStats.ci[1].toFixed(1)}
+            `;
+
+            document.getElementById('theoreticalStats').innerHTML = `
+                Mean number of heads: ${theoreticalStats.mean.toFixed(2)}<br>
+                95% CI: ${theoreticalStats.ci[0].toFixed(1)} - ${theoreticalStats.ci[1].toFixed(1)}
+            `;
+
+            // Update plots with mean lines and CI shading
+            const empiricalShapes = [
+                {
+                    type: 'line',
+                    x0: empiricalStats.mean,
+                    x1: empiricalStats.mean,
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    line: {
+                        color: 'red',
+                        width: 2,
+                        dash: 'dot'
+                    }
+                },
+                {
+                    type: 'rect',
+                    x0: empiricalStats.ci[0],
+                    x1: empiricalStats.ci[1],
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    fillcolor: 'rgba(255,0,0,0.1)',
+                    line: { width: 0 }
+                }
+            ];
+
+            const theoreticalShapes = [
+                {
+                    type: 'line',
+                    x0: theoreticalStats.mean,
+                    x1: theoreticalStats.mean,
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    line: {
+                        color: 'red',
+                        width: 2,
+                        dash: 'dot'
+                    }
+                },
+                {
+                    type: 'rect',
+                    x0: theoreticalStats.ci[0],
+                    x1: theoreticalStats.ci[1],
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    fillcolor: 'rgba(255,0,0,0.1)',
+                    line: { width: 0 }
+                }
+            ];
+
+            Plotly.relayout('empiricalHistogram', { shapes: empiricalShapes });
+            Plotly.relayout('theoreticalHistogram', { shapes: theoreticalShapes });
         }
     </script>
 </body>

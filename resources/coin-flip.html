@@ -343,7 +343,7 @@
                 y: [state.histogram]
             };
             const layout = {
-                'yaxis.dtick': maxY > 10 ? 10 : 1
+                'yaxis.dtick': maxY > 200 ? 50 : maxY > 100 ? 20 : maxY > 10 ? 10 : 1
             };
             Plotly.update('histogram', update, layout);
         }
