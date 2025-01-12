@@ -2,10 +2,10 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Sampling Variation Demo</title>
+    <meta charset="""utf-8">
+    <title>Compare 2 samples</title>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="""https://cdn.jsdelivr.net/npm/d3@7"></script>
     <style>
         body {
             font-family: system-ui, sans-serif;
@@ -68,13 +68,23 @@
 <body>
     <div id="app">
         <div class="controls">
-            <div>
-                <label for="sample-size">Sample Size: </label>
-                <select id="sample-size">
-                    <option value="10">10</option>
-                    <option value="100">100</option>
-                    <option value="1000">1000</option>
-                </select>
+            <div style="display: flex; gap: 1rem;">
+                <div>
+                    <label for="sample-size-1">Pop 1 Sample: </label>
+                    <select id="sample-size-1">
+                        <option value="10">10</option>
+                        <option value="100">100</option>
+                        <option value="1000">1000</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="sample-size-2">Pop 2 Sample: </label>
+                    <select id="sample-size-2">
+                        <option value="10">10</option>
+                        <option value="100">100</option>
+                        <option value="1000">1000</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <label>Confidence Level: </label>
@@ -100,8 +110,10 @@
             60: 0.841,
             70: 1.036,
             80: 1.28,
+            85: 1.44,
             90: 1.645,
             95: 1.96,
+            99: 2.576,
             99.9: 3.291
         };
 
@@ -119,11 +131,13 @@
             });
         }
 
-        // Initialize state
+        // Initialize state with two populations and sample sizes
         const state = {
-            population: generatePopulation(),
+            population1: generatePopulation(10000, 120, 10),
+            population2: generatePopulation(10000, 130, 10),
             sampleMeans: [],
-            sampleSize: 10,
+            sampleSize1: 10,
+            sampleSize2: 10,
             confidenceLevel: 95
         };
 
@@ -136,9 +150,13 @@
             return { mean, std };
         }
 
-        // Setup UI
-        document.getElementById('sample-size').addEventListener('change', (e) => {
-            state.sampleSize = parseInt(e.target.value);
+        // Setup UI for both sample size controls
+        document.getElementById('sample-size-1').addEventListener('change', (e) => {
+            state.sampleSize1 = parseInt(e.target.value);
+        });
+
+        document.getElementById('sample-size-2').addEventListener('change', (e) => {
+            state.sampleSize2 = parseInt(e.target.value);
         });
 
         // Setup confidence level radio buttons
@@ -161,66 +179,76 @@
 
         document.getElementById('take-samples').addEventListener('click', () => {
             const newMeans = Array.from({ length: 1000 }, () => {
-                const sample = Array.from({ length: state.sampleSize }, () =>
-                    state.population[Math.floor(Math.random() * state.population.length)]
+                const sample1 = Array.from({ length: state.sampleSize1 }, () =>
+                    state.population1[Math.floor(Math.random() * state.population1.length)]
                 );
-                return sample.reduce((a, b) => a + b, 0) / sample.length;
+                const sample2 = Array.from({ length: state.sampleSize2 }, () =>
+                    state.population2[Math.floor(Math.random() * state.population2.length)]
+                );
+                const mean1 = sample1.reduce((a, b) => a + b, 0) / sample1.length;
+                const mean2 = sample2.reduce((a, b) => a + b, 0) / sample2.length;
+                return mean2 - mean1;  // return difference in means
             });
             state.sampleMeans = newMeans;
             updatePlots();
         });
 
         function updatePlots() {
-            const popStats = calculatePopulationStats(state.population);
+            const popStats1 = calculatePopulationStats(state.population1);
+            const popStats2 = calculatePopulationStats(state.population2);
 
-            // Population plot
-            const populationTrace = {
-                x: state.population,
+            // Population plots
+            const populationTrace1 = {
+                x: state.population1,
                 type: 'histogram',
-                name: 'Population',
+                name: 'Population 1 (120mmHg)',
                 nbinsx: 40,
                 marker: {
-                    color: '#8884d8'
+                    color: 'rgba(136, 132, 216, 0.6)'  // light purple
+                }
+            };
+
+            const populationTrace2 = {
+                x: state.population2,
+                type: 'histogram',
+                name: 'Population 2 (130mmHg)',
+                nbinsx: 40,
+                marker: {
+                    color: 'rgba(130, 202, 157, 0.6)'  // light green
                 }
             };
 
             const populationLayout = {
                 title: {
-                    text: 'Population Distribution (N=10,000)',
+                    text: 'Two Population Distributions (N=10,000 each)',
                     font: { size: 14 }
                 },
                 xaxis: {
                     title: { text: 'Blood Pressure (mmHg)', font: { size: 12 } },
-                    range: [80, 160],
+                    range: [80, 170],
                     tickfont: { size: 11 }
                 },
                 yaxis: {
                     title: { text: 'Count', font: { size: 12 } },
                     tickfont: { size: 11 }
                 },
-                width: 450,  /* Reduced from 500 */
+                width: 450,           /* Reduced from 500 */
                 height: 300,
                 margin: { t: 30, r: 20, l: 40, b: 40 },
-                shapes: [{
-                    type: 'line',
-                    x0: popStats.mean,
-                    x1: popStats.mean,
-                    y0: 0,
-                    y1: 1,
-                    yref: 'paper',
-                    line: {
-                        color: 'red',
-                        width: 2
-                    }
-                }]
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: -0.2           /* Adjusted from -0.3 */
+                }
             };
 
-            Plotly.newPlot('population-plot', [populationTrace], populationLayout);
+            Plotly.newPlot('population-plot', [populationTrace1, populationTrace2], populationLayout);
 
             // Display population statistics
             document.getElementById('population-stats').innerHTML = `
-                <p>Population Mean: ${popStats.mean.toFixed(2)} mmHg</p>
-                <p>Population Standard Deviation: ${popStats.std.toFixed(2)} mmHg</p>
+                <p>Population 1 Mean: ${popStats1.mean.toFixed(2)} mmHg</p>
+                <p>Population 2 Mean: ${popStats2.mean.toFixed(2)} mmHg</p>
+                <p>True Difference: ${(popStats2.mean - popStats1.mean).toFixed(2)} mmHg</p>
             `;
 
             // Update sampling distribution plot if we have samples
@@ -228,48 +256,55 @@
                 const sampleStats = calculatePopulationStats(state.sampleMeans);
                 const selectedConfidenceLevel = parseInt(document.querySelector('input[name="confidence-level"]:checked').value);
                 const criticalValue = CONFIDENCE_LEVELS[selectedConfidenceLevel];
-                const marginOfError = criticalValue * (popStats.std / Math.sqrt(state.sampleSize));
-                const lowerCI = popStats.mean - marginOfError;
-                const upperCI = popStats.mean + marginOfError;
+
+                // Fixed standard error calculation for difference in means
+                const se1 = Math.pow(popStats1.std, 2) / state.sampleSize1;
+                const se2 = Math.pow(popStats2.std, 2) / state.sampleSize2;
+                const standardError = Math.sqrt(se1 + se2);
+                const marginOfError = criticalValue * standardError;
+
+                const trueDiff = popStats2.mean - popStats1.mean;
+                const lowerCI = trueDiff - marginOfError;
+                const upperCI = trueDiff + marginOfError;
 
                 // Count samples outside CI
-                const samplesOutsideCI = state.sampleMeans.filter(mean =>
-                    mean < lowerCI || mean > upperCI
+                const samplesOutsideCI = state.sampleMeans.filter(diff =>
+                    diff < lowerCI || diff > upperCI
                 ).length;
 
                 const samplingTrace = {
                     x: state.sampleMeans,
                     type: 'histogram',
-                    name: 'Sample Means',
+                    name: 'Sample Mean Differences',
                     nbinsx: 30,
                     marker: {
-                        color: '#82ca9d'
+                        color: 'rgba(255, 127, 80, 0.7)'  // coral
                     }
                 };
 
                 const samplingLayout = {
                     title: {
-                        text: 'Sampling Distribution of Means',
+                        text: 'Sampling Distribution of Mean Differences',
                         font: { size: 14 }
                     },
                     xaxis: {
-                        title: { text: 'Sample Means (mmHg)', font: { size: 12 } },
-                        range: [110, 130],
+                        title: { text: 'Difference in Sample Means (mmHg)', font: { size: 12 } },
+                        range: [0, 20],
                         tickfont: { size: 11 }
                     },
                     yaxis: {
                         title: { text: 'Count', font: { size: 12 } },
                         tickfont: { size: 11 }
                     },
-                    width: 450,  /* Reduced from 500 */
+                    width: 450,           /* Reduced from 500 */
                     height: 300,
                     margin: { t: 30, r: 20, l: 40, b: 40 },
                     shapes: [
-                        // Population mean line
+                        // True difference line
                         {
                             type: 'line',
-                            x0: popStats.mean,
-                            x1: popStats.mean,
+                            x0: trueDiff,
+                            x1: trueDiff,
                             y0: 0,
                             y1: 1,
                             yref: 'paper',
@@ -313,16 +348,14 @@
 
                 // Update sample statistics
                 document.getElementById('sample-stats').innerHTML = `
-                    <p>Mean of Sample Means: ${sampleStats.mean.toFixed(2)} mmHg</p>
+                    <p>Mean Difference: ${sampleStats.mean.toFixed(2)} mmHg</p>
                     <p>Standard Error: ${sampleStats.std.toFixed(2)} mmHg</p>
-                    <p>${selectedConfidenceLevel}% Confidence Interval: 
-                        ${lowerCI.toFixed(2)} to 
-                        ${upperCI.toFixed(2)} mmHg</p>
-                    <p>Number of samples outside CI: ${samplesOutsideCI}</p>
+                    <p>${selectedConfidenceLevel}% CI: ${lowerCI.toFixed(2)} to ${upperCI.toFixed(2)} mmHg</p>
+                    <p>Samples outside CI: ${samplesOutsideCI}</p>
                 `;
 
                 document.getElementById('sampling-message').innerHTML = `
-                    <p>Took ${state.sampleMeans.length} samples of size ${state.sampleSize}</p>
+                    <p>Took ${state.sampleMeans.length} samples (Population 1 size: ${state.sampleSize1}, Population 2 size: ${state.sampleSize2})</p>
                 `;
             }
         }
