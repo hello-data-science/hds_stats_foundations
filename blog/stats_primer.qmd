@@ -73,6 +73,12 @@ Where:
 <iframe src="../resources/sampling-variation.html" width="100%" height="550px" frameBorder="0"></iframe>
 :::
 
+## Comparing 2 samples
+
+::: {.column-page}
+<iframe src="../resources/compare-means.html" width="100%" height="560px" frameBorder="0"></iframe>
+:::
+
 ## Next slides
 
 To do
