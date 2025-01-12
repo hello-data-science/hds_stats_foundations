@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Sampling Variation Demo</title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .plot-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+        }
+
+        .plot-box {
+            flex: 1;
+        }
+
+        .plot-box p {
+            margin: 0.2em 0;
+        }
+
+        .controls {
+            margin: 0.5rem 0;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 4px 8px;
+            font-size: 13px;
+        }
+
+        #sampling-message {
+            font-size: 13px;
+            margin-top: 0.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="controls">
+            <div>
+                <label for="sample-size">Sample Size: </label>
+                <input type="range" id="sample-size" min="10" max="1000" step="10" value="10">
+                <span id="sample-size-value">10</span>
+            </div>
+            <div>
+                <label>Confidence Level: </label>
+                <div class="radio-group" id="confidence-levels"></div>
+            </div>
+            <button id="take-samples">Take 1000 Samples</button>
+        </div>
+        <div class="plot-container">
+            <div class="plot-box">
+                <div id="population-plot"></div>
+                <div id="population-stats"></div>
+            </div>
+            <div class="plot-box">
+                <div id="sampling-plot"></div>
+                <div id="sample-stats"></div>
+            </div>
+        </div>
+        <div id="sampling-message"></div>
+    </div>
+
+    <script>
+        const CONFIDENCE_LEVELS = {
+            60: 0.841,
+            70: 1.036,
+            80: 1.28,
+            85: 1.44,
+            90: 1.645,
+            95: 1.96,
+            99: 2.576,
+            99.9: 3.291
+        };
+
+        // Generate population data
+        function generatePopulation(size = 10000, mean = 120, std = 10) {
+            return Array.from({ length: size }, () => {
+                let u1, u2;
+                do {
+                    u1 = Math.random();
+                    u2 = Math.random();
+                } while (u1 === 0);
+
+                const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+                return Math.round(mean + z * std);
+            });
+        }
+
+        // Initialize state
+        const state = {
+            population: generatePopulation(),
+            sampleMeans: [],
+            sampleSize: 10,
+            confidenceLevel: 95
+        };
+
+        // Calculate population statistics
+        function calculatePopulationStats(population) {
+            const mean = population.reduce((a, b) => a + b, 0) / population.length;
+            const squaredDiffs = population.map(x => Math.pow(x - mean, 2));
+            const variance = squaredDiffs.reduce((a, b) => a + b, 0) / population.length;
+            const std = Math.sqrt(variance);
+            return { mean, std };
+        }
+
+        // Setup UI
+        document.getElementById('sample-size').addEventListener('input', (e) => {
+            state.sampleSize = parseInt(e.target.value);
+            document.getElementById('sample-size-value').textContent = state.sampleSize;
+        });
+
+        // Setup confidence level radio buttons
+        const confidenceLevelsDiv = document.getElementById('confidence-levels');
+        Object.keys(CONFIDENCE_LEVELS).sort((a, b) => a - b).forEach(level => {
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.id = `cl-${level}`;
+            radio.name = 'confidence-level';
+            radio.value = level;
+            radio.checked = level == 95;
+
+            const label = document.createElement('label');
+            label.htmlFor = `cl-${level}`;
+            label.textContent = `${level}%`;
+
+            confidenceLevelsDiv.appendChild(radio);
+            confidenceLevelsDiv.appendChild(label);
+        });
+
+        document.getElementById('take-samples').addEventListener('click', () => {
+            const newMeans = Array.from({ length: 1000 }, () => {
+                const sample = Array.from({ length: state.sampleSize }, () =>
+                    state.population[Math.floor(Math.random() * state.population.length)]
+                );
+                return sample.reduce((a, b) => a + b, 0) / sample.length;
+            });
+            state.sampleMeans = newMeans;
+            updatePlots();
+        });
+
+        function updatePlots() {
+            const popStats = calculatePopulationStats(state.population);
+
+            // Population plot
+            const populationTrace = {
+                x: state.population,
+                type: 'histogram',
+                name: 'Population',
+                nbinsx: 40,
+                marker: {
+                    color: '#8884d8'
+                }
+            };
+
+            const populationLayout = {
+                title: {
+                    text: 'Population Distribution (N=10,000)',
+                    font: { size: 14 }
+                },
+                xaxis: {
+                    title: { text: 'Blood Pressure (mmHg)', font: { size: 12 } },
+                    range: [80, 160],
+                    tickfont: { size: 11 }
+                },
+                yaxis: {
+                    title: { text: 'Count', font: { size: 12 } },
+                    tickfont: { size: 11 }
+                },
+                width: 500,
+                height: 300,
+                margin: { t: 30, r: 20, l: 40, b: 40 },
+                shapes: [{
+                    type: 'line',
+                    x0: popStats.mean,
+                    x1: popStats.mean,
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    line: {
+                        color: 'red',
+                        width: 2
+                    }
+                }]
+            };
+
+            Plotly.newPlot('population-plot', [populationTrace], populationLayout);
+
+            // Display population statistics
+            document.getElementById('population-stats').innerHTML = `
+                <p>Population Mean: ${popStats.mean.toFixed(2)} mmHg</p>
+                <p>Population Standard Deviation: ${popStats.std.toFixed(2)} mmHg</p>
+            `;
+
+            // Update sampling distribution plot if we have samples
+            if (state.sampleMeans.length > 0) {
+                const sampleStats = calculatePopulationStats(state.sampleMeans);
+                const selectedConfidenceLevel = parseInt(document.querySelector('input[name="confidence-level"]:checked').value);
+                const criticalValue = CONFIDENCE_LEVELS[selectedConfidenceLevel];
+                const marginOfError = criticalValue * (popStats.std / Math.sqrt(state.sampleSize));
+                const lowerCI = popStats.mean - marginOfError;
+                const upperCI = popStats.mean + marginOfError;
+
+                // Count samples outside CI
+                const samplesOutsideCI = state.sampleMeans.filter(mean =>
+                    mean < lowerCI || mean > upperCI
+                ).length;
+
+                const samplingTrace = {
+                    x: state.sampleMeans,
+                    type: 'histogram',
+                    name: 'Sample Means',
+                    nbinsx: 30,
+                    marker: {
+                        color: '#82ca9d'
+                    }
+                };
+
+                const samplingLayout = {
+                    title: {
+                        text: 'Sampling Distribution of Means',
+                        font: { size: 14 }
+                    },
+                    xaxis: {
+                        title: { text: 'Sample Means (mmHg)', font: { size: 12 } },
+                        range: [110, 130],
+                        tickfont: { size: 11 }
+                    },
+                    yaxis: {
+                        title: { text: 'Count', font: { size: 12 } },
+                        tickfont: { size: 11 }
+                    },
+                    width: 500,
+                    height: 300,
+                    margin: { t: 30, r: 20, l: 40, b: 40 },
+                    shapes: [
+                        // Population mean line
+                        {
+                            type: 'line',
+                            x0: popStats.mean,
+                            x1: popStats.mean,
+                            y0: 0,
+                            y1: 1,
+                            yref: 'paper',
+                            line: {
+                                color: 'red',
+                                width: 2
+                            }
+                        },
+                        // Lower CI line
+                        {
+                            type: 'line',
+                            x0: lowerCI,
+                            x1: lowerCI,
+                            y0: 0,
+                            y1: 1,
+                            yref: 'paper',
+                            line: {
+                                color: 'blue',
+                                width: 2,
+                                dash: 'dash'
+                            }
+                        },
+                        // Upper CI line
+                        {
+                            type: 'line',
+                            x0: upperCI,
+                            x1: upperCI,
+                            y0: 0,
+                            y1: 1,
+                            yref: 'paper',
+                            line: {
+                                color: 'blue',
+                                width: 2,
+                                dash: 'dash'
+                            }
+                        }
+                    ]
+                };
+
+                Plotly.newPlot('sampling-plot', [samplingTrace], samplingLayout);
+
+                // Update sample statistics
+                document.getElementById('sample-stats').innerHTML = `
+                    <p>Mean of Sample Means: ${sampleStats.mean.toFixed(2)} mmHg</p>
+                    <p>Standard Error: ${sampleStats.std.toFixed(2)} mmHg</p>
+                    <p>${selectedConfidenceLevel}% Confidence Interval: 
+                        ${lowerCI.toFixed(2)} to 
+                        ${upperCI.toFixed(2)} mmHg</p>
+                    <p>Number of samples outside CI: ${samplesOutsideCI}</p>
+                `;
+
+                document.getElementById('sampling-message').innerHTML = `
+                    <p>Took ${state.sampleMeans.length} samples of size ${state.sampleSize}</p>
+                `;
+            }
+        }
+
+        // Initial plot
+        updatePlots();
+    </script>
+</body>
+
+</html>
