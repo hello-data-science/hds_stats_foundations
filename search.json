@@ -21,6 +21,13 @@
     "text": "Contents\n\n⁠Single sample: probability basics - normal distribution and binomial (coins)\n⁠⁠2 samples: normal and chi square\nAdjusting for confounders - (stratifying) & linear regression. Logistic regression"
   },
   {
+    "objectID": "blog/stats_primer.html#normal-distribution",
+    "href": "blog/stats_primer.html#normal-distribution",
+    "title": "Discovering Statistics: An Interactive Primer",
+    "section": "Normal distribution",
+    "text": "Normal distribution\n\n\n\n\n\nTry this\n\nStart with default settings (mean=0, SD=1, n=30)\nReduce sample size to n=5 and observe how t-distribution tails become heavier\nIncrease sample size to n=100 and see how t-distribution converges to normal\nAdjust mean and standard deviation to see how both distributions shift and scale\nCompare the width of confidence intervals (dashed lines) between distributions\n\nNotes\n\nThe normal distribution (blue) is symmetric and bell-shaped\nThe t-distribution (red) has heavier tails than the normal distribution\nAs sample size increases, the t-distribution approaches the normal distribution\nThe choice between them depends on whether the population standard deviation is known:\n\nNormal distribution: Used when population standard deviation is known (rare in practice)\nt-distribution: Used when estimating standard deviation from sample data (most common)\nt-distribution accounts for added uncertainty in standard deviation estimate\n\n\nEquations\nThe mean (\\(\\mu\\)) and standard deviation (\\(\\sigma\\)) are calculated as follows:\n\nMean (\\(\\mu\\)): \\[ \\mu = \\frac{\\sum_{i=1}^{n} x_i}{n} \\]\nStandard Deviation (σ): \\[ \\sigma = \\sqrt{\\frac{\\sum_{i=1}^{n} (x_i - \\mu)^2}{n}} \\]\n\nWhere:\n\n\\(x_i\\) represents each individual data point\n\\(n\\) is the number of data points"
+  },
+  {
     "objectID": "blog/stats_primer.html#coin-flip-simulation",
     "href": "blog/stats_primer.html#coin-flip-simulation",
     "title": "Discovering Statistics: An Interactive Primer",

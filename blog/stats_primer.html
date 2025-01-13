@@ -414,6 +414,56 @@ Alasdair Warwick
 <li>Adjusting for confounders - (stratifying) &amp; linear regression. Logistic regression</li>
 </ul>
 </section>
+<section id="normal-distribution" class="slide level2">
+<h2>Normal distribution</h2>
+<div class="column-page">
+<iframe src="../resources/normal-vs-t-distribution.html" width="100%" height="570px" frameborder="0">
+</iframe>
+</div>
+<aside class="notes">
+<p><strong>Try this</strong></p>
+<ol type="1">
+<li>Start with default settings (mean=0, SD=1, n=30)</li>
+<li>Reduce sample size to n=5 and observe how t-distribution tails become heavier</li>
+<li>Increase sample size to n=100 and see how t-distribution converges to normal</li>
+<li>Adjust mean and standard deviation to see how both distributions shift and scale</li>
+<li>Compare the width of confidence intervals (dashed lines) between distributions</li>
+</ol>
+<p><strong>Notes</strong></p>
+<ul>
+<li>The normal distribution (blue) is symmetric and bell-shaped</li>
+<li>The t-distribution (red) has heavier tails than the normal distribution</li>
+<li>As sample size increases, the t-distribution approaches the normal distribution</li>
+<li>The choice between them depends on whether the population standard deviation is known:
+<ul>
+<li>Normal distribution: Used when population standard deviation is known (rare in practice)</li>
+<li>t-distribution: Used when estimating standard deviation from sample data (most common)</li>
+<li>t-distribution accounts for added uncertainty in standard deviation estimate</li>
+</ul></li>
+</ul>
+<p><strong>Equations</strong></p>
+<p>The mean (<span class="math inline">\(\mu\)</span>) and standard deviation (<span class="math inline">\(\sigma\)</span>) are calculated as follows:</p>
+<ul>
+<li><p>Mean (<span class="math inline">\(\mu\)</span>): <span class="math display">\[ \mu = \frac{\sum_{i=1}^{n} x_i}{n} \]</span></p></li>
+<li><p>Standard Deviation (σ): <span class="math display">\[ \sigma = \sqrt{\frac{\sum_{i=1}^{n} (x_i - \mu)^2}{n}} \]</span></p></li>
+</ul>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(x_i\)</span> represents each individual data point</li>
+<li><span class="math inline">\(n\)</span> is the number of data points</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="coin-flip-simulation" class="slide level2">
 <h2>Coin Flip Simulation</h2>
 <p>This simulation demonstrates the binomial distribution through repeated coin flips.</p>

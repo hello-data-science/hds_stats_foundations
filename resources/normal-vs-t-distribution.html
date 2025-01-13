@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Normal vs t Distribution</title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .controls {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 13px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        #stats {
+            font-size: 13px;
+            margin-top: 1rem;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="controls">
+            <div class="control-group">
+                <label>Mean: <span id="mean-value">0</span></label>
+                <input type="range" id="mean" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Standard Deviation: <span id="std-value">1</span></label>
+                <input type="range" id="std" min="0.1" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>Sample Size: <span id="size-value">30</span></label>
+                <input type="range" id="size" min="2" max="100" step="1" value="30">
+            </div>
+        </div>
+        <div id="plot"></div>
+        <div id="stats"></div>
+    </div>
+
+    <script>
+        // State
+        const state = {
+            mean: 0,
+            stdDev: 1,
+            sampleSize: 30
+        };
+
+        // Normal distribution PDF
+        function normalPDF(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+                Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+
+        // T distribution PDF
+        function tPDF(x, df) {
+            function gamma(n) {
+                if (n === 1) return 1;
+                if (n === 0.5) return Math.sqrt(Math.PI);
+                return (n - 1) * gamma(n - 1);
+            }
+
+            const coefficient = gamma((df + 1) / 2) / (Math.sqrt(df * Math.PI) * gamma(df / 2));
+            return coefficient * Math.pow(1 + (x * x) / df, -(df + 1) / 2);
+        }
+
+        // Calculate confidence intervals
+        function calculateCriticalValues() {
+            // Normal distribution (z-score for 95% CI)
+            const zCritical = 1.96;
+            const normalCI = {
+                lower: state.mean - (zCritical * state.stdDev),
+                upper: state.mean + (zCritical * state.stdDev)
+            };
+
+            // T distribution
+            const df = state.sampleSize - 1;
+            const alpha = 0.025;  // Two-tailed 95% CI
+            const tCritical = Math.abs(jStat.studentt.inv(alpha, df));
+            const tCI = {
+                lower: state.mean - (tCritical * state.stdDev),
+                upper: state.mean + (tCritical * state.stdDev)
+            };
+
+            return { normalCI, tCI, tCritical };
+        }
+
+        function generateData() {
+            const x = [];
+            const normalY = [];
+            const tY = [];
+            const range = state.stdDev * 4;
+            const step = range / 100;
+
+            for (let i = state.mean - range; i <= state.mean + range; i += step) {
+                x.push(i);
+                normalY.push(normalPDF(i, state.mean, state.stdDev));
+                tY.push(tPDF((i - state.mean) / state.stdDev, state.sampleSize - 1));
+            }
+
+            return { x, normalY, tY };
+        }
+
+        function updatePlot() {
+            const data = generateData();
+            const criticalValues = calculateCriticalValues();
+
+            const traces = [
+                {
+                    x: data.x,
+                    y: data.normalY,
+                    name: 'Normal Distribution',
+                    line: { color: '#2563eb' }
+                },
+                {
+                    x: data.x,
+                    y: data.tY,
+                    name: 't Distribution',
+                    line: { color: '#dc2626' }
+                }
+            ];
+
+            const layout = {
+                title: {
+                    text: 'Normal vs t Distribution Comparison',
+                    font: { size: 16 }
+                },
+                width: 800,
+                height: 400,
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: -0.15,
+                    x: 0.5,
+                    xanchor: 'center'
+                },
+                margin: {
+                    l: 50,
+                    r: 50,
+                    t: 40,
+                    b: 60  // increased bottom margin to accommodate legend
+                },
+                shapes: [
+                    // Normal CI lines
+                    {
+                        type: 'line',
+                        x0: criticalValues.normalCI.lower,
+                        x1: criticalValues.normalCI.lower,
+                        y0: 0,
+                        y1: 0.4,
+                        line: {
+                            color: '#1e40af',
+                            width: 2,
+                            dash: 'dash'
+                        }
+                    },
+                    {
+                        type: 'line',
+                        x0: criticalValues.normalCI.upper,
+                        x1: criticalValues.normalCI.upper,
+                        y0: 0,
+                        y1: 0.4,
+                        line: {
+                            color: '#1e40af',
+                            width: 2,
+                            dash: 'dash'
+                        }
+                    },
+                    // T CI lines
+                    {
+                        type: 'line',
+                        x0: criticalValues.tCI.lower,
+                        x1: criticalValues.tCI.lower,
+                        y0: 0,
+                        y1: 0.4,
+                        line: {
+                            color: '#dc2626',
+                            width: 2,
+                            dash: 'dash'
+                        }
+                    },
+                    {
+                        type: 'line',
+                        x0: criticalValues.tCI.upper,
+                        x1: criticalValues.tCI.upper,
+                        y0: 0,
+                        y1: 0.4,
+                        line: {
+                            color: '#dc2626',
+                            width: 2,
+                            dash: 'dash'
+                        }
+                    }
+                ]
+            };
+
+            Plotly.newPlot('plot', traces, layout);
+
+            // Update stats display
+            document.getElementById('stats').innerHTML = `
+                <p>Normal Distribution 95% CI: ${criticalValues.normalCI.lower.toFixed(2)} to ${criticalValues.normalCI.upper.toFixed(2)}</p>
+                <p>t Distribution 95% CI: ${criticalValues.tCI.lower.toFixed(2)} to ${criticalValues.tCI.upper.toFixed(2)}</p>
+            `;
+        }
+
+        // Setup event listeners
+        document.getElementById('mean').addEventListener('input', (e) => {
+            state.mean = parseFloat(e.target.value);
+            document.getElementById('mean-value').textContent = state.mean.toFixed(2);
+            updatePlot();
+        });
+
+        document.getElementById('std').addEventListener('input', (e) => {
+            state.stdDev = parseFloat(e.target.value);
+            document.getElementById('std-value').textContent = state.stdDev.toFixed(2);
+            updatePlot();
+        });
+
+        document.getElementById('size').addEventListener('input', (e) => {
+            state.sampleSize = parseInt(e.target.value);
+            document.getElementById('size-value').textContent = state.sampleSize;
+            updatePlot();
+        });
+
+        // Initial plot
+        updatePlot();
+    </script>
+</body>
+
+</html>
