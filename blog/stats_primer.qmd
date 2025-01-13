@@ -29,6 +29,49 @@ format:
 - ⁠⁠2 samples: normal and chi square
 - Adjusting for confounders - (stratifying) & linear regression. Logistic regression
 
+## Normal distribution
+
+::: {.column-page}
+<iframe src="../resources/normal-vs-t-distribution.html" width="100%" height="570px" frameBorder="0"></iframe>
+:::
+
+::: {.notes}
+
+**Try this**
+
+1. Start with default settings (mean=0, SD=1, n=30)
+2. Reduce sample size to n=5 and observe how t-distribution tails become heavier
+3. Increase sample size to n=100 and see how t-distribution converges to normal
+4. Adjust mean and standard deviation to see how both distributions shift and scale
+5. Compare the width of confidence intervals (dashed lines) between distributions
+
+**Notes**
+
+- The normal distribution (blue) is symmetric and bell-shaped
+- The t-distribution (red) has heavier tails than the normal distribution
+- As sample size increases, the t-distribution approaches the normal distribution
+- The choice between them depends on whether the population standard deviation is known:
+    - Normal distribution: Used when population standard deviation is known (rare in practice)
+    - t-distribution: Used when estimating standard deviation from sample data (most common)
+    - t-distribution accounts for added uncertainty in standard deviation estimate
+
+**Equations**
+
+The mean ($\mu$) and standard deviation ($\sigma$) are calculated as follows:
+
+- Mean ($\mu$): 
+$$ \mu = \frac{\sum_{i=1}^{n} x_i}{n} $$
+
+- Standard Deviation (σ): 
+$$ \sigma = \sqrt{\frac{\sum_{i=1}^{n} (x_i - \mu)^2}{n}} $$
+
+Where:
+
+- $x_i$ represents each individual data point
+- $n$ is the number of data points
+
+:::
+
 ## Coin Flip Simulation
 
 This simulation demonstrates the binomial distribution through repeated coin flips.
