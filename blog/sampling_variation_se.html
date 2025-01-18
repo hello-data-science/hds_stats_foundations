@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.7.6">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-12-31">
 <meta name="description" content="Explore how sample size affects sampling distribution using simulated samples of 100 individuals.">
 
-<title>Statistics Foundations - Sampling Variation and Standard Error</title>
+<title>Sampling Variation and Standard Error – Statistics Foundations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,11 +20,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -35,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -49,43 +50,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -102,19 +73,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-6c21014d9765ba549c6ebad95917e4d7.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0a9048d95e02c7ff9c82715fd5ddea4.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-04dd6a5ca28aac96903e51a8fbffbcaa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-b3883a83b6cdceb4314f965facc5c958.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -123,8 +100,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script type="module" src="../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
@@ -132,7 +111,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/dist/plot.umd.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -141,9 +148,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../stats-favicon.png" alt="" class="navbar-logo">
     </a>
@@ -151,37 +158,37 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">Statistics Foundations</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog_listing.html">
- <span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../blog_listing.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/hello-data-science/hds_stats_foundations"><i class="bi bi-git" role="img" aria-label="github_gitlab">
+    <a class="nav-link" href="https://github.com/hello-data-science/hds_stats_foundations"> <i class="bi bi-git" role="img" aria-label="github_gitlab">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-              <div class="quarto-toggle-container">
-                  <a href="" class="quarto-color-scheme-toggle nav-link" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
   <div class="quarto-reader-toggle-btn">
   <i class="bi"></i>
   </div>
 </a>
-              </div>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -201,7 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#key-concepts" id="toc-key-concepts" class="nav-link" data-scroll-target="#key-concepts">Key concepts</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/hello-data-science/hds_stats_foundations/edit/main/blog/sampling_variation_se.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/hello-data-science/hds_stats_foundations/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/hello-data-science/hds_stats_foundations/edit/main/blog/sampling_variation_se.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hello-data-science/hds_stats_foundations/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -244,13 +251,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
   
 
+
 </header>
+
 
 <section id="app" class="level1">
 <h1>App</h1>
 <p>This interactive visualization allows you to explore how sample size affects the sampling distribution and the calculation of confidence intervals (CI). Adjust the sample size and confidence level, then take samples to see the results.</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1" data-startfrom="29" data-source-offset="-41"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 28;"><span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>CONFIDENCE_LEVELS <span class="op">=</span> ({</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="dv">60</span><span class="op">:</span> <span class="fl">0.841</span><span class="op">,</span></span>
@@ -569,12 +578,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>Interpretation</strong>: When reading “mean = 120 (95% CI: 115-125)”, this suggests we’re 95% confident the true population mean lies between 115-125</li>
 <li><strong>Sample vs Population</strong>: In real studies, we only have one sample and don’t know the true population mean - the CI helps express our uncertainty</li>
 </ul>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Equations
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -588,12 +597,12 @@ Equations
 </div>
 </div>
 </div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try This
 </div>
 </div>
@@ -625,11 +634,11 @@ Try This
 </section>
 
 </main> <!-- /main -->
-
 <script type="ojs-module-contents">
-{"contents":[{"methodName":"interpret","cellName":"ojs-cell-1","inline":false,"source":"// Define confidence levels and z-scores\nCONFIDENCE_LEVELS = ({\n  60: 0.841,\n  70: 1.036,\n  80: 1.28,\n  85: 1.44,\n  90: 1.645,\n  95: 1.96,\n  99: 2.576,\n  99.9: 3.291\n})\n\n// Create inputs\nviewof sampleSize = Inputs.range([10, 1000], {\n  step: 10, \n  value: 10, \n  label: \"Sample Size\"\n})\n\n// Create radio buttons for confidence level\nviewof confidenceLevel = Inputs.radio(\n  Object.keys(CONFIDENCE_LEVELS).map(Number).sort((a,b) => a-b),\n  {\n    value: 95,\n    label: \"Confidence Level\",\n    format: x => x + \"%\"\n  }\n)\n\nviewof takeSamples = Inputs.button(\"Take 100 Samples\")\n\n// Generate initial population\npopulation = {\n  const size = 10000;\n  const mean = 120;\n  const std = 10;\n  \n  return Array.from({length: size}, () => {\n    let u1, u2;\n    do {\n      u1 = Math.random();\n      u2 = Math.random();\n    } while (u1 === 0);\n    \n    const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);\n    return Math.round(mean + z * std);\n  });\n}\n\n// Calculate population statistics\npopulationStats = {\n  const mean = population.reduce((a, b) => a + b, 0) / population.length;\n  const squaredDiffs = population.map(x => Math.pow(x - mean, 2));\n  const variance = squaredDiffs.reduce((a, b) => a + b, 0) / population.length;\n  const std = Math.sqrt(variance);\n  \n  return {mean, std};\n}\n\n// Create population histogram\npopulationPlot = Plot.plot({\n  width: 600,\n  height: 300,\n  grid: true,\n  x: {\n    label: \"Blood Pressure (mmHg)\",\n    domain: [80, 160],\n    ticks: d3.range(80, 161, 5)\n  },\n  y: {label: \"Count\"},\n  marks: [\n    Plot.rectY(\n      d3.bin()\n        .domain([80, 160])\n        .thresholds(40)\n        (population),\n      {x1: \"x0\", x2: \"x1\", y: \"length\", fill: \"#8884d8\"}\n    ),\n    Plot.ruleY([0]),\n    Plot.ruleX([populationStats.mean], {stroke: \"red\", strokeWidth: 2})\n  ],\n  title: \"Population Distribution (N=10,000)\"\n})\n\n// Initialize mutable state\ninitialSampleMeans = []\nmutable sampleMeans = initialSampleMeans\n\n// Sampling handler cell\nhandleSampling = {\n  takeSamples; // React to button clicks\n  \n  const newMeans = Array.from({length: 100}, () => {\n    const sample = Array.from({length: sampleSize}, () => \n      population[Math.floor(Math.random() * population.length)]\n    );\n    return sample.reduce((a, b) => a + b, 0) / sample.length;\n  });\n  \n  mutable sampleMeans = newMeans;\n  return md`*Generated ${newMeans.length} new sample means*`\n}\n\n// Calculate confidence interval\nciStats = {\n  if (sampleMeans.length === 0) return null;\n  \n  const standardError = populationStats.std / Math.sqrt(sampleSize);\n  const zScore = CONFIDENCE_LEVELS[confidenceLevel];\n  const ciWidth = zScore * standardError;\n  const ciLower = populationStats.mean - ciWidth;\n  const ciUpper = populationStats.mean + ciWidth;\n  const outsideCI = sampleMeans.filter(\n    mean => mean < ciLower || mean > ciUpper\n  ).length;\n  \n  return {\n    standardError,\n    ciLower,\n    ciUpper,\n    outsideCI\n  };\n}\n\n// Create sample means histogram\nsamplingPlot = {\n  if (sampleMeans.length === 0) return null;\n  \n  return Plot.plot({\n    width: 600,\n    height: 300,\n    grid: true,\n    x: {\n      label: \"Sample Mean Blood Pressure (mmHg)\",\n      domain: [80, 160],\n      ticks: d3.range(80, 161, 5)\n    },\n    y: {label: \"Count\"},\n    marks: [\n      Plot.rectY(\n        d3.bin()\n          .domain([80, 160])\n          .thresholds(40)\n          (sampleMeans),\n        {x1: \"x0\", x2: \"x1\", y: \"length\", fill: \"#82ca9d\"}\n      ),\n      Plot.ruleY([0]),\n      Plot.ruleX([populationStats.mean], {stroke: \"red\", strokeWidth: 2}),\n      Plot.ruleX([ciStats.ciLower], {stroke: \"blue\", strokeDasharray: \"3,3\"}),\n      Plot.ruleX([ciStats.ciUpper], {stroke: \"blue\", strokeDasharray: \"3,3\"})\n    ],\n    title: `Distribution of Sample Means (n=${sampleSize})`\n  });\n}\n\n// Display statistics\npopulation_statistics = {\n  const population_stats = html`<div style=\"font-size: 14px; color: #666;\">\n    <p>Population Mean: ${populationStats.mean.toFixed(1)} mmHg</p>\n    <p>Population Standard Deviation: ${populationStats.std.toFixed(1)} mmHg</p>\n  </div>`;\n  return population_stats;\n}\n\nsample_statistics = {\n const sample_stats = html`<div style=\"font-size: 14px; color: #666;\">\n    ${ciStats ? html`\n      <p>${confidenceLevel}% Confidence Interval: ${ciStats.ciLower.toFixed(1)} - ${ciStats.ciUpper.toFixed(1)} mmHg</p>\n      <p>Number of samples outside CI: ${ciStats.outsideCI} out of 100</p>\n      <p>Standard Error: ${ciStats.standardError.toFixed(2)} mmHg</p>\n    ` : ''}\n  </div>`;\n  return sample_stats; \n}\n\n// Layout everything\nhtml`<div style=\"font-family: system-ui, sans-serif;\">\n  ${populationPlot}\n  ${population_statistics}\n  <div style=\"margin: 1rem 0;\">\n    ${viewof sampleSize}\n    ${viewof confidenceLevel}\n    ${viewof takeSamples}\n  </div>\n  ${handleSampling}\n  ${samplingPlot}\n  ${sample_statistics}\n</div>`\n"},{"methodName":"interpretQuiet","source":"shinyInput('sampleSize')"},{"methodName":"interpretQuiet","source":"shinyInput('confidenceLevel')"},{"methodName":"interpretQuiet","source":"shinyInput('takeSamples')"}]}
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ii8vIERlZmluZSBjb25maWRlbmNlIGxldmVscyBhbmQgei1zY29yZXNcbkNPTkZJREVOQ0VfTEVWRUxTID0gKHtcbiAgNjA6IDAuODQxLFxuICA3MDogMS4wMzYsXG4gIDgwOiAxLjI4LFxuICA4NTogMS40NCxcbiAgOTA6IDEuNjQ1LFxuICA5NTogMS45NixcbiAgOTk6IDIuNTc2LFxuICA5OS45OiAzLjI5MVxufSlcblxuLy8gQ3JlYXRlIGlucHV0c1xudmlld29mIHNhbXBsZVNpemUgPSBJbnB1dHMucmFuZ2UoWzEwLCAxMDAwXSwge1xuICBzdGVwOiAxMCwgXG4gIHZhbHVlOiAxMCwgXG4gIGxhYmVsOiBcIlNhbXBsZSBTaXplXCJcbn0pXG5cbi8vIENyZWF0ZSByYWRpbyBidXR0b25zIGZvciBjb25maWRlbmNlIGxldmVsXG52aWV3b2YgY29uZmlkZW5jZUxldmVsID0gSW5wdXRzLnJhZGlvKFxuICBPYmplY3Qua2V5cyhDT05GSURFTkNFX0xFVkVMUykubWFwKE51bWJlcikuc29ydCgoYSxiKSA9PiBhLWIpLFxuICB7XG4gICAgdmFsdWU6IDk1LFxuICAgIGxhYmVsOiBcIkNvbmZpZGVuY2UgTGV2ZWxcIixcbiAgICBmb3JtYXQ6IHggPT4geCArIFwiJVwiXG4gIH1cbilcblxudmlld29mIHRha2VTYW1wbGVzID0gSW5wdXRzLmJ1dHRvbihcIlRha2UgMTAwIFNhbXBsZXNcIilcblxuLy8gR2VuZXJhdGUgaW5pdGlhbCBwb3B1bGF0aW9uXG5wb3B1bGF0aW9uID0ge1xuICBjb25zdCBzaXplID0gMTAwMDA7XG4gIGNvbnN0IG1lYW4gPSAxMjA7XG4gIGNvbnN0IHN0ZCA9IDEwO1xuICBcbiAgcmV0dXJuIEFycmF5LmZyb20oe2xlbmd0aDogc2l6ZX0sICgpID0+IHtcbiAgICBsZXQgdTEsIHUyO1xuICAgIGRvIHtcbiAgICAgIHUxID0gTWF0aC5yYW5kb20oKTtcbiAgICAgIHUyID0gTWF0aC5yYW5kb20oKTtcbiAgICB9IHdoaWxlICh1MSA9PT0gMCk7XG4gICAgXG4gICAgY29uc3QgeiA9IE1hdGguc3FydCgtMi4wICogTWF0aC5sb2codTEpKSAqIE1hdGguY29zKDIuMCAqIE1hdGguUEkgKiB1Mik7XG4gICAgcmV0dXJuIE1hdGgucm91bmQobWVhbiArIHogKiBzdGQpO1xuICB9KTtcbn1cblxuLy8gQ2FsY3VsYXRlIHBvcHVsYXRpb24gc3RhdGlzdGljc1xucG9wdWxhdGlvblN0YXRzID0ge1xuICBjb25zdCBtZWFuID0gcG9wdWxhdGlvbi5yZWR1Y2UoKGEsIGIpID0+IGEgKyBiLCAwKSAvIHBvcHVsYXRpb24ubGVuZ3RoO1xuICBjb25zdCBzcXVhcmVkRGlmZnMgPSBwb3B1bGF0aW9uLm1hcCh4ID0+IE1hdGgucG93KHggLSBtZWFuLCAyKSk7XG4gIGNvbnN0IHZhcmlhbmNlID0gc3F1YXJlZERpZmZzLnJlZHVjZSgoYSwgYikgPT4gYSArIGIsIDApIC8gcG9wdWxhdGlvbi5sZW5ndGg7XG4gIGNvbnN0IHN0ZCA9IE1hdGguc3FydCh2YXJpYW5jZSk7XG4gIFxuICByZXR1cm4ge21lYW4sIHN0ZH07XG59XG5cbi8vIENyZWF0ZSBwb3B1bGF0aW9uIGhpc3RvZ3JhbVxucG9wdWxhdGlvblBsb3QgPSBQbG90LnBsb3Qoe1xuICB3aWR0aDogNjAwLFxuICBoZWlnaHQ6IDMwMCxcbiAgZ3JpZDogdHJ1ZSxcbiAgeDoge1xuICAgIGxhYmVsOiBcIkJsb29kIFByZXNzdXJlIChtbUhnKVwiLFxuICAgIGRvbWFpbjogWzgwLCAxNjBdLFxuICAgIHRpY2tzOiBkMy5yYW5nZSg4MCwgMTYxLCA1KVxuICB9LFxuICB5OiB7bGFiZWw6IFwiQ291bnRcIn0sXG4gIG1hcmtzOiBbXG4gICAgUGxvdC5yZWN0WShcbiAgICAgIGQzLmJpbigpXG4gICAgICAgIC5kb21haW4oWzgwLCAxNjBdKVxuICAgICAgICAudGhyZXNob2xkcyg0MClcbiAgICAgICAgKHBvcHVsYXRpb24pLFxuICAgICAge3gxOiBcIngwXCIsIHgyOiBcIngxXCIsIHk6IFwibGVuZ3RoXCIsIGZpbGw6IFwiIzg4ODRkOFwifVxuICAgICksXG4gICAgUGxvdC5ydWxlWShbMF0pLFxuICAgIFBsb3QucnVsZVgoW3BvcHVsYXRpb25TdGF0cy5tZWFuXSwge3N0cm9rZTogXCJyZWRcIiwgc3Ryb2tlV2lkdGg6IDJ9KVxuICBdLFxuICB0aXRsZTogXCJQb3B1bGF0aW9uIERpc3RyaWJ1dGlvbiAoTj0xMCwwMDApXCJcbn0pXG5cbi8vIEluaXRpYWxpemUgbXV0YWJsZSBzdGF0ZVxuaW5pdGlhbFNhbXBsZU1lYW5zID0gW11cbm11dGFibGUgc2FtcGxlTWVhbnMgPSBpbml0aWFsU2FtcGxlTWVhbnNcblxuLy8gU2FtcGxpbmcgaGFuZGxlciBjZWxsXG5oYW5kbGVTYW1wbGluZyA9IHtcbiAgdGFrZVNhbXBsZXM7IC8vIFJlYWN0IHRvIGJ1dHRvbiBjbGlja3NcbiAgXG4gIGNvbnN0IG5ld01lYW5zID0gQXJyYXkuZnJvbSh7bGVuZ3RoOiAxMDB9LCAoKSA9PiB7XG4gICAgY29uc3Qgc2FtcGxlID0gQXJyYXkuZnJvbSh7bGVuZ3RoOiBzYW1wbGVTaXplfSwgKCkgPT4gXG4gICAgICBwb3B1bGF0aW9uW01hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIHBvcHVsYXRpb24ubGVuZ3RoKV1cbiAgICApO1xuICAgIHJldHVybiBzYW1wbGUucmVkdWNlKChhLCBiKSA9PiBhICsgYiwgMCkgLyBzYW1wbGUubGVuZ3RoO1xuICB9KTtcbiAgXG4gIG11dGFibGUgc2FtcGxlTWVhbnMgPSBuZXdNZWFucztcbiAgcmV0dXJuIG1kYCpHZW5lcmF0ZWQgJHtuZXdNZWFucy5sZW5ndGh9IG5ldyBzYW1wbGUgbWVhbnMqYFxufVxuXG4vLyBDYWxjdWxhdGUgY29uZmlkZW5jZSBpbnRlcnZhbFxuY2lTdGF0cyA9IHtcbiAgaWYgKHNhbXBsZU1lYW5zLmxlbmd0aCA9PT0gMCkgcmV0dXJuIG51bGw7XG4gIFxuICBjb25zdCBzdGFuZGFyZEVycm9yID0gcG9wdWxhdGlvblN0YXRzLnN0ZCAvIE1hdGguc3FydChzYW1wbGVTaXplKTtcbiAgY29uc3QgelNjb3JlID0gQ09ORklERU5DRV9MRVZFTFNbY29uZmlkZW5jZUxldmVsXTtcbiAgY29uc3QgY2lXaWR0aCA9IHpTY29yZSAqIHN0YW5kYXJkRXJyb3I7XG4gIGNvbnN0IGNpTG93ZXIgPSBwb3B1bGF0aW9uU3RhdHMubWVhbiAtIGNpV2lkdGg7XG4gIGNvbnN0IGNpVXBwZXIgPSBwb3B1bGF0aW9uU3RhdHMubWVhbiArIGNpV2lkdGg7XG4gIGNvbnN0IG91dHNpZGVDSSA9IHNhbXBsZU1lYW5zLmZpbHRlcihcbiAgICBtZWFuID0+IG1lYW4gPCBjaUxvd2VyIHx8IG1lYW4gPiBjaVVwcGVyXG4gICkubGVuZ3RoO1xuICBcbiAgcmV0dXJuIHtcbiAgICBzdGFuZGFyZEVycm9yLFxuICAgIGNpTG93ZXIsXG4gICAgY2lVcHBlcixcbiAgICBvdXRzaWRlQ0lcbiAgfTtcbn1cblxuLy8gQ3JlYXRlIHNhbXBsZSBtZWFucyBoaXN0b2dyYW1cbnNhbXBsaW5nUGxvdCA9IHtcbiAgaWYgKHNhbXBsZU1lYW5zLmxlbmd0aCA9PT0gMCkgcmV0dXJuIG51bGw7XG4gIFxuICByZXR1cm4gUGxvdC5wbG90KHtcbiAgICB3aWR0aDogNjAwLFxuICAgIGhlaWdodDogMzAwLFxuICAgIGdyaWQ6IHRydWUsXG4gICAgeDoge1xuICAgICAgbGFiZWw6IFwiU2FtcGxlIE1lYW4gQmxvb2QgUHJlc3N1cmUgKG1tSGcpXCIsXG4gICAgICBkb21haW46IFs4MCwgMTYwXSxcbiAgICAgIHRpY2tzOiBkMy5yYW5nZSg4MCwgMTYxLCA1KVxuICAgIH0sXG4gICAgeToge2xhYmVsOiBcIkNvdW50XCJ9LFxuICAgIG1hcmtzOiBbXG4gICAgICBQbG90LnJlY3RZKFxuICAgICAgICBkMy5iaW4oKVxuICAgICAgICAgIC5kb21haW4oWzgwLCAxNjBdKVxuICAgICAgICAgIC50aHJlc2hvbGRzKDQwKVxuICAgICAgICAgIChzYW1wbGVNZWFucyksXG4gICAgICAgIHt4MTogXCJ4MFwiLCB4MjogXCJ4MVwiLCB5OiBcImxlbmd0aFwiLCBmaWxsOiBcIiM4MmNhOWRcIn1cbiAgICAgICksXG4gICAgICBQbG90LnJ1bGVZKFswXSksXG4gICAgICBQbG90LnJ1bGVYKFtwb3B1bGF0aW9uU3RhdHMubWVhbl0sIHtzdHJva2U6IFwicmVkXCIsIHN0cm9rZVdpZHRoOiAyfSksXG4gICAgICBQbG90LnJ1bGVYKFtjaVN0YXRzLmNpTG93ZXJdLCB7c3Ryb2tlOiBcImJsdWVcIiwgc3Ryb2tlRGFzaGFycmF5OiBcIjMsM1wifSksXG4gICAgICBQbG90LnJ1bGVYKFtjaVN0YXRzLmNpVXBwZXJdLCB7c3Ryb2tlOiBcImJsdWVcIiwgc3Ryb2tlRGFzaGFycmF5OiBcIjMsM1wifSlcbiAgICBdLFxuICAgIHRpdGxlOiBgRGlzdHJpYnV0aW9uIG9mIFNhbXBsZSBNZWFucyAobj0ke3NhbXBsZVNpemV9KWBcbiAgfSk7XG59XG5cbi8vIERpc3BsYXkgc3RhdGlzdGljc1xucG9wdWxhdGlvbl9zdGF0aXN0aWNzID0ge1xuICBjb25zdCBwb3B1bGF0aW9uX3N0YXRzID0gaHRtbGA8ZGl2IHN0eWxlPVwiZm9udC1zaXplOiAxNHB4OyBjb2xvcjogIzY2NjtcIj5cbiAgICA8cD5Qb3B1bGF0aW9uIE1lYW46ICR7cG9wdWxhdGlvblN0YXRzLm1lYW4udG9GaXhlZCgxKX0gbW1IZzwvcD5cbiAgICA8cD5Qb3B1bGF0aW9uIFN0YW5kYXJkIERldmlhdGlvbjogJHtwb3B1bGF0aW9uU3RhdHMuc3RkLnRvRml4ZWQoMSl9IG1tSGc8L3A+XG4gIDwvZGl2PmA7XG4gIHJldHVybiBwb3B1bGF0aW9uX3N0YXRzO1xufVxuXG5zYW1wbGVfc3RhdGlzdGljcyA9IHtcbiBjb25zdCBzYW1wbGVfc3RhdHMgPSBodG1sYDxkaXYgc3R5bGU9XCJmb250LXNpemU6IDE0cHg7IGNvbG9yOiAjNjY2O1wiPlxuICAgICR7Y2lTdGF0cyA/IGh0bWxgXG4gICAgICA8cD4ke2NvbmZpZGVuY2VMZXZlbH0lIENvbmZpZGVuY2UgSW50ZXJ2YWw6ICR7Y2lTdGF0cy5jaUxvd2VyLnRvRml4ZWQoMSl9IC0gJHtjaVN0YXRzLmNpVXBwZXIudG9GaXhlZCgxKX0gbW1IZzwvcD5cbiAgICAgIDxwPk51bWJlciBvZiBzYW1wbGVzIG91dHNpZGUgQ0k6ICR7Y2lTdGF0cy5vdXRzaWRlQ0l9IG91dCBvZiAxMDA8L3A+XG4gICAgICA8cD5TdGFuZGFyZCBFcnJvcjogJHtjaVN0YXRzLnN0YW5kYXJkRXJyb3IudG9GaXhlZCgyKX0gbW1IZzwvcD5cbiAgICBgIDogJyd9XG4gIDwvZGl2PmA7XG4gIHJldHVybiBzYW1wbGVfc3RhdHM7IFxufVxuXG4vLyBMYXlvdXQgZXZlcnl0aGluZ1xuaHRtbGA8ZGl2IHN0eWxlPVwiZm9udC1mYW1pbHk6IHN5c3RlbS11aSwgc2Fucy1zZXJpZjtcIj5cbiAgJHtwb3B1bGF0aW9uUGxvdH1cbiAgJHtwb3B1bGF0aW9uX3N0YXRpc3RpY3N9XG4gIDxkaXYgc3R5bGU9XCJtYXJnaW46IDFyZW0gMDtcIj5cbiAgICAke3ZpZXdvZiBzYW1wbGVTaXplfVxuICAgICR7dmlld29mIGNvbmZpZGVuY2VMZXZlbH1cbiAgICAke3ZpZXdvZiB0YWtlU2FtcGxlc31cbiAgPC9kaXY+XG4gICR7aGFuZGxlU2FtcGxpbmd9XG4gICR7c2FtcGxpbmdQbG90fVxuICAke3NhbXBsZV9zdGF0aXN0aWNzfVxuPC9kaXY+YFxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCdzYW1wbGVTaXplJykifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6InNoaW55SW5wdXQoJ2NvbmZpZGVuY2VMZXZlbCcpIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJzaGlueUlucHV0KCd0YWtlU2FtcGxlcycpIn1dfQ==
 </script>
 <script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
 window._ojs.paths.runtimeToDoc = "../../blog";
 window._ojs.paths.runtimeToRoot = "../..";
 window._ojs.paths.docToRoot = "..";
@@ -677,6 +686,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -745,13 +781,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -778,12 +816,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
     }
-  });
-  clipboard.on('success', function(e) {
+    return false;
+  }
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -815,7 +856,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
   const viewSource = window.document.getElementById('quarto-view-source') ||
                      window.document.getElementById('quarto-code-tools-source');
   if (viewSource) {
@@ -867,10 +928,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -880,8 +958,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -893,9 +980,244 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -939,4 +1261,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/hello-data-science/hds_stats_foundations/edit/main/blog/sampling_variation_se.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/hello-data-science/hds_stats_foundations/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
